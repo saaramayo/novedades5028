@@ -24,7 +24,7 @@ interface ExpedienteProps {
     docente: any;
     catedrasIniciales: any[];
     licencias: any[];
-    catalogos: { materias: any[], divisiones: any[] };
+    catalogos: { materias: any[], divisiones: any[], tipos: any[] };
     carga_horaria: any[];
 }
 
