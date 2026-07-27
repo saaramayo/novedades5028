@@ -4,7 +4,7 @@ import { useActionState } from 'react';
 import { createLicencia } from '@/actions/licencias';
 
 export default function LicenciaForm({ docentes, tipos }: { docentes: any[], tipos: any[] }) {
-    const [state, formAction] = useActionState(createLicencia, { error: null });
+    const [state, formAction] = useActionState(createLicencia, { error: null, success: false });
 
     return (
         <form action={formAction} className="space-y-3 bg-white p-5 rounded-xl border">

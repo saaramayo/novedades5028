@@ -82,7 +82,7 @@ export async function createLicencia(prevState: any, formData: FormData) {
     const id_turno = formData.get('id_turno');
 
     if (new Date(f_fin as string) < new Date(f_inicio as string)) {
-        return { error: 'Error: La fecha de finalización no puede ser anterior al inicio.' };
+        return { success: false, error: 'Error: La fecha de finalización no puede ser anterior al inicio.' };
     }
 
     try {
@@ -99,7 +99,7 @@ export async function createLicencia(prevState: any, formData: FormData) {
         revalidatePath('/dashboard/licencias');
         return { success: true, error: null };
     } catch {
-        return { error: 'Ocurrió un error al persistir la licencia en PostgreSQL.' };
+        return { success: false, error: 'Ocurrió un error al persistir la licencia en PostgreSQL.' };
     }
 }
 

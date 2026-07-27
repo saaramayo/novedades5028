@@ -1,39 +1,53 @@
+'use client';
+
+import { useActionState } from 'react';
 import { loginAction } from '@/actions/auth';
 
 export default function LoginPage() {
+    // Inicializamos el hook con un estado vacío
+    const [state, formAction, isPending] = useActionState(loginAction, { error: "" });
+
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-100">
-            <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
-                <h2 className="mb-6 text-center text-2xl font-bold text-gray-800">
-                    Colegio Reyes Católicos
-                </h2>
-                <h4 className="mb-4 text-center text-2xl text-gray-800">
+        <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
+            <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-sm border border-slate-200">
+                <h4 className="mb-6 text-center text-xl font-bold text-gray-800">
                     Sistema de Control de Novedades
                 </h4>
-                <form action={loginAction} className="space-y-4">
+
+                {/* Usamos 'formAction' en lugar de 'loginAction' directo */}
+                <form action={formAction} className="space-y-4">
+
+                    {/* Muestra el error en pantalla si las credenciales fallan */}
+                    {state?.error && (
+                        <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-bold rounded-lg">
+                            ⚠️ {state.error}
+                        </div>
+                    )}
+
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Usuario</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Usuario</label>
                         <input
                             type="text"
                             name="username"
                             required
-                            className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
+                            className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Contraseña</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
                         <input
                             type="password"
                             name="password"
                             required
-                            className="mt-1 w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
+                            className="w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
                         />
                     </div>
                     <button
                         type="submit"
-                        className="w-full rounded-md bg-blue-600 p-2 font-semibold text-white hover:bg-blue-700 transition"
+                        disabled={isPending}
+                        className="w-full rounded-lg bg-slate-900 p-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition disabled:opacity-50"
                     >
-                        Ingresar al Sistema
+                        {isPending ? 'Verificando...' : 'Ingresar al Sistema'}
                     </button>
                 </form>
             </div>

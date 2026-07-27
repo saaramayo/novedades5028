@@ -7,6 +7,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     // 1. Obtener la sesión cifrada de forma segura en el servidor
     const token = (await cookies()).get('session_token')?.value;
     const usuario = token ? await verifyToken(token) : null;
+    console.log(usuario);
 
     return (
         <div className="flex h-screen bg-slate-50/50 flex-col md:flex-row overflow-hidden">

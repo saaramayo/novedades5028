@@ -9,7 +9,6 @@ import {
     Users,
     FileText,
     LogOut,
-    GraduationCap,
     BookMarked,
     CalendarRange,
     Grid3X3,
@@ -21,7 +20,7 @@ import {
 import Image from 'next/image';
 
 interface SidebarClienteProps {
-    usuarioLogueado: { username: string; role: string; nombre: string } | null;
+    usuarioLogueado: { username: string; role: string; } | null;
 }
 
 export default function SidebarCliente({ usuarioLogueado }: SidebarClienteProps) {

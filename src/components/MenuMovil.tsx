@@ -11,7 +11,6 @@ import {
     FileText,
     Calendar,
     LogOut,
-    GraduationCap,
     BookMarked,
     CalendarRange,
     Grid3X3,
@@ -30,7 +29,7 @@ import {
 import Image from 'next/image';
 
 interface MenuMovilProps {
-    usuarioLogueado: { username: string; role: string; nombre: string } | null;
+    usuarioLogueado: { username: string; role: string } | null;
 }
 
 export default function MenuMovil({ usuarioLogueado }: MenuMovilProps) {
@@ -69,7 +68,7 @@ export default function MenuMovil({ usuarioLogueado }: MenuMovilProps) {
     return (
         <Sheet open={open} onOpenChange={setOpen}>
             {/* Botón de apertura (hamburguesa) visible solo en pantallas móviles */}
-            <SheetTrigger asChild>
+            <SheetTrigger>
                 <div className="md:hidden p-2 border border-slate-200 rounded-lg bg-white text-slate-700 hover:bg-slate-50 transition-colors shadow-xs">
                     <Menu className="h-5 w-5" />
                 </div>

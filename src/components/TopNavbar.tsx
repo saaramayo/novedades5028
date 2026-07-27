@@ -17,7 +17,7 @@ import {
 import Link from 'next/link';
 
 interface TopNavbarProps {
-    usuarioLogueado: { username: string; role: string; nombre: string } | null;
+    usuarioLogueado: { username: string; role: string } | null;
 }
 
 export default function TopNavbar({ usuarioLogueado }: TopNavbarProps) {
@@ -123,13 +123,13 @@ export default function TopNavbar({ usuarioLogueado }: TopNavbarProps) {
             {/* Lado Derecho: Menú Dropdown Corregido (Contenedor Neutral sin Base UI Labels) */}
             <div className="flex items-center pl-4">
                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
+                    <DropdownMenuTrigger>
                         <div className="flex items-center space-x-2 p-1.5 rounded-lg hover:bg-slate-50 transition-colors focus:outline-none">
                             <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200 text-slate-600">
                                 <User className="h-4 w-4" />
                             </div>
                             <div className="hidden sm:block text-left max-w-[120px]">
-                                <p className="text-xs font-semibold text-slate-900 truncate">{usuarioLogueado?.nombre || 'Usuario'}</p>
+                                <p className="text-xs font-semibold text-slate-900 truncate">{usuarioLogueado?.username || 'Usuario'}</p>
                                 <p className="text-[10px] font-medium text-slate-400 truncate">{usuarioLogueado?.role || 'Operador'}</p>
                             </div>
                             <ChevronDown className="h-3 w-3 text-slate-400 hidden sm:block" />
@@ -140,8 +140,8 @@ export default function TopNavbar({ usuarioLogueado }: TopNavbarProps) {
                         {/* SOLUCIÓN AL ERROR: Reemplazamos la directiva por un div estático con padding semántico */}
                         <div className="font-normal p-3 select-none">
                             <div className="flex flex-col space-y-0.5">
-                                <p className="text-sm font-bold text-slate-900">{usuarioLogueado?.nombre || 'Usuario'}</p>
-                                <p className="text-xs text-slate-400 font-medium">@{usuarioLogueado?.username || 'operador'}</p>
+                                <p className="text-sm font-bold text-slate-900">{usuarioLogueado?.username || 'Usuario'}</p>
+                                <p className="text-xs text-slate-400 font-medium">@{usuarioLogueado?.role || 'operador'}</p>
                             </div>
                         </div>
 
@@ -156,7 +156,7 @@ export default function TopNavbar({ usuarioLogueado }: TopNavbarProps) {
                         <DropdownMenuSeparator className="bg-slate-100" />
 
                         <form action={logoutAction}>
-                            <DropdownMenuItem asChild>
+                            <DropdownMenuItem>
                                 <button className="w-full p-2 text-red-600 text-xs font-bold focus:bg-red-50 focus:text-red-700 cursor-pointer flex items-center rounded-b-lg">
                                     <LogOut className="mr-2 h-4 w-4" /> Cerrar Sesión
                                 </button>

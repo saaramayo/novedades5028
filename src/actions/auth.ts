@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 import { signToken } from '@/lib/jwt';
 import bcrypt from 'bcryptjs';
 
-export async function loginAction(formData: FormData) {
+export async function loginAction(prevState: any, formData: FormData) {
     //console.log(formData);
     const username = formData.get('username') as string;
     const password = formData.get('password') as string;
