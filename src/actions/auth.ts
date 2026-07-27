@@ -63,7 +63,7 @@ export async function loginAction(prevState: any, formData: FormData) {
 
     } catch (error) {
         console.log(error);
-        return { error: 'Ocurrió un error en el servidor de autenticación.' };
+        return { error: 'Ocurrió un error en el servidor de autenticación.' + error };
     }
 
     redirect('/dashboard');
