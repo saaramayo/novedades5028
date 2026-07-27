@@ -23,7 +23,7 @@ export default function EditarLicenciaGeneralModal({ licencia, tipos }: EditarGe
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
+            <DialogTrigger>
                 <div className="inline-flex items-center px-2.5 py-1.5 border border-slate-200 text-slate-700 bg-white rounded-md text-xs font-bold hover:bg-slate-50 transition-colors shadow-2xs">
                     <Pencil className="w-3.5 h-3.5 mr-1 text-slate-500" />
                     Modificar

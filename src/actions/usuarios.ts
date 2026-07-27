@@ -3,6 +3,8 @@
 import { query } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
+import { cookies } from 'next/headers';
+import { verifyToken } from '@/lib/jwt';
 
 const REGISTROS_POR_PAGINA = 5;
 

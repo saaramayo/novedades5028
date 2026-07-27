@@ -27,7 +27,7 @@ export default function EditarLicenciaModal({ licencia, tipos, onSuccess }: Edit
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
+            <DialogTrigger>
                 <div className="inline-flex items-center px-2 py-1 border border-slate-200 text-slate-700 bg-white rounded-md text-xs font-semibold hover:bg-slate-50 shadow-2xs">
                     <Pencil className="w-3 h-3 mr-1 text-slate-500" /> Corregir
                 </div>

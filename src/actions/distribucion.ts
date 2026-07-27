@@ -49,7 +49,7 @@ export async function getDistribucionPaginada(paginaActual: number, search: stri
     const registrosRes = await query(registrosQuery, params);
     const conteoRes = await query(countQuery, params);
 
-    const totalRegistros = parseInt(conteoRes.rows.count, 10);
+    const totalRegistros = parseInt(conteoRes.rows[0].count, 10);
     const totalPaginas = Math.ceil(totalRegistros / REGISTROS_POR_PAGINA);
 
     return { distribuciones: registrosRes.rows, totalPaginas: totalPaginas || 1 };

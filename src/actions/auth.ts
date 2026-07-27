@@ -62,6 +62,7 @@ export async function loginAction(formData: FormData) {
         });
 
     } catch (error) {
+        console.log(error);
         return { error: 'Ocurrió un error en el servidor de autenticación.' };
     }
 

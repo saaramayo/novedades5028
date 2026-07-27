@@ -162,7 +162,7 @@ export async function asignarMateriaDocente(id_docente: number, formData: FormDa
         return { success: true, error: null };
     } catch (error) {
         console.error(error);
-        return { error: 'Ocurrió un error o la combinación ya se encuentra asignada. ' + error.message };
+        return { error: 'Ocurrió un error o la combinación ya se encuentra asignada. ' };
     }
 }
 
