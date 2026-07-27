@@ -1,4 +1,9 @@
 import { Pool } from 'pg';
+import dns from 'dns';
+
+// FORZADO DE RED IPV4: Le indicamos a Node.js que priorice siempre IPv4 en producción
+dns.setDefaultResultOrder('ipv4first');
+
 
 // Se crea una única instancia del Pool de conexiones.
 // Al usar la propiedad 'connectionString', Postgres extrae automáticamente el usuario,
