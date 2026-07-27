@@ -390,7 +390,7 @@ function DialogModalEdicion({ Docente, FormAction, IsPending, State }: any) {
 
     return (
         <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-            <DialogTrigger asChild>
+            <DialogTrigger>
                 <div className="flex items-center px-3 py-1.5 border border-slate-200 text-slate-700 bg-white rounded-lg text-xs font-semibold hover:bg-slate-50 transition-colors shadow-2xs">
                     <Pencil className="w-3.5 h-3.5 mr-1.5 text-slate-500" />
                     Modificar Datos
