@@ -2,6 +2,7 @@
 
 import { useActionState } from 'react';
 import { loginAction } from '@/actions/auth';
+import Image from 'next/image';
 
 export default function LoginPage() {
     // Inicializamos el hook con un estado vacío
@@ -10,9 +11,13 @@ export default function LoginPage() {
     return (
         <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
             <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-sm border border-slate-200">
+                <div className="mb-6 flex justify-center">
+                    <Image src="/logo5028.svg" alt="5028" width={100} height={100} loading='eager' />
+                </div>
                 <h4 className="mb-6 text-center text-xl font-bold text-gray-800">
                     Sistema de Control de Novedades
                 </h4>
+                <h5 className="mb-6 text-center font-bold text-gray-600">Colegio N° 5028 &quot;Reyes Católicos&quot;</h5>
 
                 {/* Usamos 'formAction' en lugar de 'loginAction' directo */}
                 <form action={formAction} className="space-y-4">

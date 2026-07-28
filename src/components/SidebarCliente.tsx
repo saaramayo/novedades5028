@@ -59,7 +59,7 @@ export default function SidebarCliente({ usuarioLogueado }: SidebarClienteProps)
         <aside className="hidden md:flex w-64 bg-white border-r border-slate-200 flex-col justify-between shrink-0">
             <div className="p-6 overflow-y-auto flex-1">
                 <div className="flex items-center space-x-2 border-b border-slate-100 pb-5">
-                    <Image src="/logo5028.svg" alt="5028" width={80} height={80} />
+                    <Image src="/logo5028.svg" alt="5028" width={80} height={80} loading='eager' />
 
                     <div>
                         <h1 className="text-sm font-semibold text-slate-900 tracking-tight">Col. N° 5028</h1>
