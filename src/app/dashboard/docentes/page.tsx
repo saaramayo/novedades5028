@@ -12,8 +12,6 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import EditarDocenteModal from './EditarDocenteModal';
-
 
 interface PageProps {
     searchParams: Promise<{ page?: string; search?: string }>;
