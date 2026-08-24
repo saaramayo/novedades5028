@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getDocentesFiltradosYPaginados } from '@/actions/docentes';
 import Buscador from './Buscador';
+import DocenteModalForm from './DocenteModalForm';
 
 import {
     Table,
