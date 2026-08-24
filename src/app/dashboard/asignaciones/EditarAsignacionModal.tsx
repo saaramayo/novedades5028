@@ -46,27 +46,13 @@ export default function EditarAsignacionModal({ asignacion, catalogos }: EditarP
                                     {catalogos.docentes.map(d => <option key={d.id_docente} value={d.id_docente}>{d.apellido}, {d.nombre}</option>)}
                                 </select>
                             </div>
-                            <div>
-                                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Materia</label>
-                                <select name="id_materia" defaultValue={asignacion.id_materia} required className="w-full border p-2 rounded-lg text-sm bg-white">
-                                    {catalogos.materias.map(m => <option key={m.id_materia} value={m.id_materia}>{m.nombre}</option>)}
-                                </select>
-                            </div>
-                            <div>
-                                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Curso / División</label>
-                                <select name="id_division" defaultValue={asignacion.id_division} required className="w-full border p-2 rounded-lg text-sm bg-white">
-                                    {catalogos.divisiones.map(d => <option key={d.id_division} value={d.id_division}>{d.curso_nombre} - {d.division_nombre}</option>)}
-                                </select>
-                            </div>
 
-                            {/* NUEVOS CAMPOS EDICIÓN */}
-                            <div className="grid grid-cols-3 gap-2">
+
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-1">
                                 <div className="col-span-2">
-                                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Situación de Revista</label>
-                                    <select name="situacion_revista" defaultValue={asignacion.situacion_revista} required className="w-full border p-2 rounded-lg text-sm bg-white">
-                                        <option value="Titular">Titular</option>
-                                        <option value="Interino">Interino</option>
-                                        <option value="Suplente">Suplente</option>
+                                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Materia</label>
+                                    <select name="id_materia" defaultValue={asignacion.id_materia} required className="w-full border p-2 rounded-lg text-sm bg-white">
+                                        {catalogos.materias.map(m => <option key={m.id_materia} value={m.id_materia}>{m.nombre}</option>)}
                                     </select>
                                 </div>
                                 <div>
@@ -75,7 +61,26 @@ export default function EditarAsignacionModal({ asignacion, catalogos }: EditarP
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-2">
+
+                            {/* NUEVOS CAMPOS EDICIÓN */}
+                            <div className="grid grid-cols-1 sm:grid-cols-4 gap-1">
+                                <div className="col-span-2">
+                                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Curso/División</label>
+                                    <select name="id_division" defaultValue={asignacion.id_division} required className="w-full border p-2 rounded-lg text-sm bg-white">
+                                        {catalogos.divisiones.map(d => <option key={d.id_division} value={d.id_division}>{d.curso_nombre} - {d.division_nombre}</option>)}
+                                    </select>
+                                </div>
+                                <div className="col-span-2">
+                                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Situación de Revista</label>
+                                    <select name="situacion_revista" defaultValue={asignacion.situacion_revista} required className="w-full border p-2 rounded-lg text-sm bg-white">
+                                        <option value="Titular">Titular</option>
+                                        <option value="Interino">Interino</option>
+                                        <option value="Suplente">Suplente</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-1">
                                 <div>
                                     <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Toma Posesión</label>
                                     <input type="date" name="fch_toma_posesion" defaultValue={asignacion.fch_toma_posesion ? new Date(asignacion.fch_toma_posesion).toISOString().split('T')[0] : ''} required className="w-full border p-2 rounded-lg text-xs" />
@@ -86,9 +91,9 @@ export default function EditarAsignacionModal({ asignacion, catalogos }: EditarP
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-3 gap-2">
+                            <div className="grid grid-cols-3 gap-1">
                                 <div className="col-span-2">
-                                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Instrumento Legal / Res.</label>
+                                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Instrumento Legal/Res.</label>
                                     <input type="text" name="dcto_res" defaultValue={asignacion.dcto_res || ''} className="w-full border p-2 rounded-lg text-sm" />
                                 </div>
                                 <div>

@@ -83,7 +83,7 @@ export default function TopNavbar({ usuarioLogueado }: TopNavbarProps) {
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
                     <input
                         type="search"
-                        placeholder="Buscar agentes por apellido o DNI..."
+                        placeholder="Buscar agentes por apellido, nombre o DNI..."
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                         onFocus={() => inputValue.trim().length >= 2 && setMostrarMenu(true)}
@@ -112,7 +112,7 @@ export default function TopNavbar({ usuarioLogueado }: TopNavbarProps) {
                                     </div>
                                 </div>
                                 <span className="font-mono text-[9px] font-bold text-slate-400 bg-slate-50 border px-1 py-0.5 rounded shrink-0 hidden sm:inline-block">
-                                    {agente.legajo}
+                                    {agente.cuil}
                                 </span>
                             </button>
                         ))}

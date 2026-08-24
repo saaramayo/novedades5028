@@ -13,7 +13,7 @@ export async function getAsignacionesPaginadas(paginaActual: number, search: str
     let params: any[] = [];
 
     if (search.trim() !== '') {
-        whereClause = `WHERE d.apellido ILIKE $1 OR m.nombre ILIKE $1`;
+        whereClause = `WHERE d.apellido ILIKE $1 OR m.nombre ILIKE $1 OR d.cuil ILIKE $1`;
         params = [`%${search.trim()}%`];
     }
 
@@ -21,14 +21,16 @@ export async function getAsignacionesPaginadas(paginaActual: number, search: str
         SELECT 
             a.id_asignacion, a.anio_lectivo, a.id_docente, a.id_materia, a.id_division,
             a.situacion_revista, a.cant_hs, a.fch_toma_posesion, a.fch_cese, a.dcto_res,
-            CONCAT(d.apellido, ', ', d.nombre) AS docente_agente, d.cuil,
+            CONCAT(d.apellido, ', ', d.nombre) AS docente_agente, d.dni, d.cuil,
             m.nombre AS materia_nombre,
-            div.nombre AS division_nombre, c.nombre AS curso_nombre
+            div.nombre AS division_nombre, c.nombre AS curso_nombre,
+            t.nombre AS turno
         FROM asignaciones a
         JOIN docentes d ON a.id_docente = d.id_docente
         JOIN materias m ON a.id_materia = m.id_materia
         JOIN divisiones div ON a.id_division = div.id_division
         JOIN cursos c ON div.id_curso = c.id_curso
+        JOIN turnos t ON div.id_turno = t.id_turno
         ${whereClause}
         ORDER BY a.anio_lectivo DESC, d.apellido ASC
         LIMIT ${REGISTROS_POR_PAGINA} OFFSET ${offset}

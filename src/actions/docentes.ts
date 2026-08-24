@@ -78,12 +78,14 @@ export async function getDocenteCatedras(id_docente: number) {
     try {
         const text = `
             SELECT 
-                a.id_asignacion, -- Campo clave añadido para el borrado
+                a.id_asignacion,
                 m.nombre AS materia_nombre, 
                 m.codigo AS materia_codigo,
                 div.nombre AS division_nombre,
                 c.nombre AS curso_nombre,
-                t.nombre AS turno, a.anio_lectivo,
+                t.id_turno, 
+                t.nombre AS turno, 
+                a.anio_lectivo,
                 a.situacion_revista,
                 a.fch_toma_posesion,
                 a.cant_hs,
@@ -94,8 +96,26 @@ export async function getDocenteCatedras(id_docente: number) {
             JOIN cursos c ON div.id_curso = c.id_curso
             JOIN turnos t ON t.id_turno = div.id_turno
             WHERE a.id_docente = $1
-            ORDER BY a.anio_lectivo DESC, c.nombre, div.nombre
+            ORDER BY a.anio_lectivo DESC, t.id_turno ASC
         `;
+        
+        /*const text = `
+            SELECT a.id_asignacion, bc.id_turno, 
+                a.id_asignacion, a.anio_lectivo, a.situacion_revista, a.cant_hs, a.fch_toma_posesion, a.fch_cese, a.dcto_res,
+                m.nombre AS materia_nombre,
+                div.nombre AS division_nombre, c.nombre AS curso_nombre,
+                t.id_turno, t.nombre AS turno_nombre
+            FROM asignaciones a
+            JOIN materias m ON a.id_materia = m.id_materia
+            JOIN divisiones div ON a.id_division = div.id_division
+            JOIN cursos c ON div.id_curso = c.id_curso
+            -- Cruzamos con la distribución horaria fija para extraer el turno
+            LEFT JOIN distribucion_semanal ds ON a.id_asignacion = ds.id_asignacion
+            LEFT JOIN bloques_clase bc ON ds.id_bloque = bc.id_bloque
+            LEFT JOIN turnos t ON bc.id_turno = t.id_turno
+            WHERE a.id_docente = $1
+            ORDER BY a.anio_lectivo DESC, t.id_turno ASC
+        `;*/
         const res = await query(text, [id_docente]);
         return res.rows;
     } catch (error) {
@@ -208,12 +228,12 @@ export async function getDocentePorId(id_docente: number) {
 // Obtener el historial completo de solicitudes de licencias del agente
 export async function getLicenciasPorDocente(id_docente: number) {
     const text = `
-        SELECT s.*, tl.articulo, tl.denominacion, t.nombre AS turno
+        SELECT s.*, tl.articulo, tl.denominacion, t.id_turno, t.nombre AS turno
         FROM solicitudes_licencias s
         JOIN tipos_licencias tl ON s.id_tipo_licencia = tl.id_tipo_licencia
         JOIN turnos t ON t.id_turno = s.id_turno
         WHERE s.id_docente = $1
-        ORDER BY s.fecha_inicio DESC
+        ORDER BY s.fecha_inicio DESC, t.id_turno ASC
     `;
     const res = await query(text, [id_docente]);
     return res.rows;

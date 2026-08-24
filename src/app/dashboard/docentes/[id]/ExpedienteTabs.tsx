@@ -226,7 +226,7 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
 
 
             {/* PESTAÑA 2: ASIGNACIONES CURRICULARES ACTUALIZADA */}
-            <TabsContent value="asignaciones" className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs space-y-4">
+            <TabsContent value="asignaciones" className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
                         <h3 className="text-base font-bold text-slate-900">Planificación de Materias</h3>
@@ -241,50 +241,75 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                     />
                 </div>
 
-                {/* Listado de cátedras con soporte de desvinculación */}
-                <div className="space-y-2 pt-2">
+                {/* Listado de cátedras ordenadas dinámicamente por Turnos */}
+                <div className="space-y-6 pt-2">
                     {catedras.length === 0 ? (
                         <p className="text-xs text-slate-400 text-center py-8 border border-dashed rounded-lg bg-slate-50/50">
                             El agente no registra materias dictadas en el ciclo actual.
                         </p>
                     ) : (
-                        catedras.map((c) => (
-                            <div key={c.id_asignacion} className="flex items-center justify-between p-3 rounded-xl border border-slate-100 bg-white shadow-2xs">
-                                <div>
-                                    <p className="text-sm font-semibold text-slate-800">{c.materia_nombre}</p>
-                                    <p className="text-xs text-slate-400 font-medium">
-                                        {c.curso_nombre} — <span className="text-slate-600 font-bold">{c.division_nombre} (Turno {c.turno})</span>
-                                    </p>
+                        // 1. Extraemos de forma única los nombres de los turnos presentes en tus datos (ej: "Mañana", "Tarde")
+                        Array.from(new Set(catedras.map(c => c.turno || 'Sin Especificar'))).map((nombreTurno) => {
+                            // 2. Filtramos las cátedras que corresponden estrictamente a este bloque de turno
+                            const catedrasDelTurno = catedras.filter(c => (c.turno || 'Sin Especificar') === nombreTurno);
+
+                            return (
+                                <div key={nombreTurno} className="space-y-2 border border-slate-100 rounded-xl p-4 bg-slate-50/40">
+                                    {/* Subcabecera del Turno */}
+                                    <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                                        <span className="text-xs font-bold text-slate-700 tracking-wide uppercase flex items-center">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-slate-500 mr-2"></span>
+                                            Turno {nombreTurno}
+                                        </span>
+                                        <Badge variant="outline" className="font-bold text-[10px] bg-white text-slate-500 font-mono">
+                                            {catedrasDelTurno.length} {catedrasDelTurno.length === 1 ? 'Cargo' : 'Cargos'}
+                                        </Badge>
+                                    </div>
+
+                                    {/* Tarjetas del Turno */}
+                                    <div className="space-y-2 pt-1">
+                                        {catedrasDelTurno.map((c) => (
+                                            <div key={c.id_asignacion} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 rounded-xl border border-slate-100 bg-white shadow-3xs gap-3">
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-sm font-semibold text-slate-800 truncate">{c.materia_nombre}</p>
+                                                    <p className="text-xs text-slate-400 font-medium">
+                                                        {c.curso_nombre} — <span className="text-slate-600 font-bold">{c.division_nombre}</span>
+                                                    </p>
+                                                </div>
+                                                <div className="sm:w-36 shrink-0">
+                                                    <p className="text-sm font-semibold text-slate-800">{c.cant_hs} horas</p>
+                                                    <p className="text-[11px] text-slate-400 font-medium">T. de Pos.: {new Date(c.fch_toma_posesion).toLocaleDateString('es-AR')}</p>
+                                                </div>
+                                                <div className="sm:w-32 shrink-0">
+                                                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Instr. Legal</p>
+                                                    <p className="text-xs font-semibold text-slate-700 truncate">{c.dcto_res || '-'}</p>
+                                                </div>
+                                                <div className="flex items-center justify-between sm:justify-end space-x-2 shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0">
+                                                    <Badge variant="outline" className="font-mono text-[10px] text-slate-500 bg-slate-50">
+                                                        {c.situacion_revista}
+                                                    </Badge>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleEliminarAsignacion(c.id_asignacion)}
+                                                        className="p-1.5 text-red-600 hover:bg-red-50 rounded-md transition-colors border border-transparent hover:border-red-100"
+                                                        title="Desvincular"
+                                                    >
+                                                        <Trash2 className="w-3.5 h-3.5" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
-                                <div>
-                                    <p className="text-sm font-semibold text-slate-800">{c.cant_hs} horas</p>
-                                    <p className="text-xs text-slate-400 font-medium">T. de Pos.: {new Date(c.fch_toma_posesion).toLocaleDateString('es-AR')}</p>
-                                </div>
-                                <div>
-                                    <p className="text-sm font-semibold text-slate-800">Dcto./Res.</p>
-                                    <p className="text-sm font-semibold text-slate-800">{c.dcto_res}</p>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <Badge variant="outline" className="font-mono text-[10px] text-slate-500 bg-slate-50">
-                                        {c.situacion_revista}
-                                    </Badge>
-                                    <button
-                                        type="button"
-                                        onClick={() => handleEliminarAsignacion(c.id_asignacion)}
-                                        className="p-1.5 text-red-600 hover:bg-red-50 rounded-md transition-colors border border-transparent hover:border-red-100"
-                                        title="Desvincular"
-                                    >
-                                        <Trash2 className="w-3.5 h-3.5" />
-                                    </button>
-                                </div>
-                            </div>
-                        ))
+                            );
+                        })
                     )}
                 </div>
             </TabsContent>
 
+
             {/* PESTAÑA 3: HISTORIAL DE LICENCIAS ACTUALIZADA */}
-            <TabsContent value="licencias" className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs space-y-4">
+            <TabsContent value="licencias" className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs space-y-6">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div>
                         <h3 className="text-base font-bold text-slate-900">Historial de Artículos Solicitados</h3>
@@ -295,67 +320,88 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                     <AsignarLicenciaModal idDocente={docente.id_docente} tipos={catalogos.tipos} onSuccess={refrescarLicencias} />
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-6">
                     {licenciasLista.length === 0 ? (
-                        <p className="text-xs text-slate-400 text-center py-6 border border-dashed rounded-lg bg-slate-50/50">El docente nunca solicitó artículos ni licencias en la institución.</p>
+                        <p className="text-xs text-slate-400 text-center py-6 border border-dashed rounded-lg bg-slate-50/50">
+                            El docente nunca solicitó artículos ni licencias en la institución.
+                        </p>
                     ) : (
-                        <div className="bg-white rounded-xl border overflow-hidden text-sm">
+                        // 1. Extraemos de forma única los nombres de los turnos registrados en las licencias
+                        Array.from(new Set(licenciasLista.map(l => l.turno || 'Sin Especificar'))).map((nombreTurno) => {
+                            // 2. Filtramos las licencias correspondientes a este turno específico
+                            const licenciasDelTurno = licenciasLista.filter(l => (l.turno || 'Sin Especificar') === nombreTurno);
 
-                            {/* CELULARES (Tarjetas Móviles) */}
-                            <div className="block md:hidden divide-y divide-slate-100">
-                                {licenciasLista.map((l) => (
-                                    <div key={l.id_solicitud} className="p-4 space-y-2 bg-white">
-                                        <div className="flex items-center justify-between">
-                                            <Badge className="font-mono bg-slate-100 text-slate-700 text-[10px] font-bold px-1.5 py-0.5 rounded border">{l.articulo}</Badge>
-                                            <p className="text-xs text-slate-400 font-medium">{l.turno}</p>
-                                            <div className="flex items-center space-x-2">
-                                                <Badge className="text-[10px] font-bold rounded">{l.estado}</Badge>
-                                                <EditarLicenciaModal licencia={l} tipos={catalogos.tipos} onSuccess={refrescarLicencias} />
-                                            </div>
-                                        </div>
-                                        <p className="text-sm font-semibold text-slate-800">{l.denominacion}</p>
-                                        <p className="text-xs text-slate-400 font-medium">Fecha: {new Date(l.fecha_inicio).toLocaleDateString('es-AR')} al {new Date(l.fecha_fin).toLocaleDateString('es-AR')}</p>
-                                        <p className="text-xs text-slate-400 font-medium">{l.tiempo} {l.descr_tiempo}</p>
+                            return (
+                                <div key={nombreTurno} className="space-y-3 border border-slate-100 rounded-xl p-4 bg-slate-50/40">
+                                    {/* Subcabecera del Turno */}
+                                    <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                                        <span className="text-xs font-bold text-slate-700 tracking-wide uppercase flex items-center">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-slate-500 mr-2"></span>
+                                            Turno {nombreTurno}
+                                        </span>
+                                        <Badge variant="outline" className="font-bold text-[10px] bg-white text-slate-500 font-mono">
+                                            {licenciasDelTurno.length} {licenciasDelTurno.length === 1 ? 'Registro' : 'Registros'}
+                                        </Badge>
                                     </div>
-                                ))}
-                            </div>
 
-                            {/* ESCRITORIO (Tabla Clásica) */}
-                            <div className="hidden md:block">
-                                <table className="w-full text-left border-collapse">
-                                    <thead className="bg-slate-50/70 border-b">
-                                        <tr>
-                                            <th className="p-3 font-semibold text-slate-600 text-xs uppercase">Artículo</th>
-                                            <th className="p-3 font-semibold text-slate-600 text-xs uppercase">Turno</th>
-                                            <th className="p-3 font-semibold text-slate-600 text-xs uppercase">Descripción Motivo</th>
-                                            <th className="p-3 font-semibold text-slate-600 text-xs uppercase">Desde - Hasta</th>
-                                            <th className="p-3 font-semibold text-slate-600 text-xs uppercase">Tiempo</th>
-                                            <th className="p-3 font-semibold text-slate-600 text-xs uppercase">Estado</th>
-                                            <th className="p-3 font-semibold text-slate-600 text-xs uppercase text-right">Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {licenciasLista.map((l) => (
-                                            <tr key={l.id_solicitud} className="border-b hover:bg-slate-50/50 transition-colors">
-                                                <td className="p-3"><Badge variant="outline" className="font-mono font-bold">{l.articulo}</Badge></td>
-                                                <td className="p-3 text-slate-600 text-xs">{l.turno}</td>
-                                                <td className="p-3 font-semibold text-slate-800">{l.denominacion}</td>
-                                                <td className="p-3 text-slate-600 text-xs">{new Date(l.fecha_inicio).toLocaleDateString('es-AR')} al {new Date(l.fecha_fin).toLocaleDateString('es-AR')}</td>
-                                                <td className="p-3 text-slate-600 text-xs">{l.tiempo} {l.descr_tiempo}</td>
-                                                <td className="p-3"><Badge className="text-[10px] font-bold rounded">{l.estado}</Badge></td>
-                                                <td className="p-3 text-right">
-                                                    <EditarLicenciaModal licencia={l} tipos={catalogos.tipos} onSuccess={refrescarLicencias} />
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                    <div className="bg-white rounded-xl border overflow-hidden text-sm shadow-3xs">
 
-                        </div>
+                                        {/* CELULARES (Tarjetas Móviles por Turno) */}
+                                        <div className="block md:hidden divide-y divide-slate-100">
+                                            {licenciasDelTurno.map((l) => (
+                                                <div key={l.id_solicitud} className="p-4 space-y-2 bg-white">
+                                                    <div className="flex items-center justify-between">
+                                                        <Badge className="font-mono bg-slate-100 text-slate-700 text-[10px] font-bold px-1.5 py-0.5 rounded border">{l.articulo}</Badge>
+                                                        <div className="flex items-center space-x-2">
+                                                            <Badge className="text-[10px] font-bold rounded">{l.estado}</Badge>
+                                                            <EditarLicenciaModal licencia={l} tipos={catalogos.tipos} onSuccess={refrescarLicencias} />
+                                                        </div>
+                                                    </div>
+                                                    <p className="text-sm font-semibold text-slate-800">{l.denominacion}</p>
+                                                    <p className="text-xs text-slate-400 font-medium">Fecha: {new Date(l.fecha_inicio).toLocaleDateString('es-AR')} al {new Date(l.fecha_fin).toLocaleDateString('es-AR')}</p>
+                                                    <p className="text-xs text-slate-400 font-medium">{l.tiempo} {l.descr_tiempo}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        {/* ESCRITORIO (Tabla Clásica por Turno) */}
+                                        <div className="hidden md:block">
+                                            <table className="w-full text-left border-collapse">
+                                                <thead className="bg-slate-50/70 border-b">
+                                                    <tr>
+                                                        <th className="p-3 font-semibold text-slate-600 text-xs uppercase w-[100px]">Artículo</th>
+                                                        <th className="p-3 font-semibold text-slate-600 text-xs uppercase">Descripción</th>
+                                                        <th className="p-3 font-semibold text-slate-600 text-xs uppercase">Desde - Hasta</th>
+                                                        <th className="p-3 font-semibold text-slate-600 text-xs uppercase">Tiempo</th>
+                                                        <th className="p-3 font-semibold text-slate-600 text-xs uppercase">Estado</th>
+                                                        <th className="p-3 font-semibold text-slate-600 text-xs uppercase text-right w-[100px]">Acciones</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {licenciasDelTurno.map((l) => (
+                                                        <tr key={l.id_solicitud} className="border-b last:border-b-0 hover:bg-slate-50/50 transition-colors">
+                                                            <td className="p-3"><Badge variant="outline" className="font-mono font-bold">{l.articulo}</Badge></td>
+                                                            <td className="p-3 font-semibold text-slate-800">{l.denominacion}</td>
+                                                            <td className="p-3 text-slate-600 text-xs">{new Date(l.fecha_inicio).toLocaleDateString('es-AR')} al {new Date(l.fecha_fin).toLocaleDateString('es-AR')}</td>
+                                                            <td className="p-3 text-slate-600 text-xs">{l.tiempo} {l.descr_tiempo}</td>
+                                                            <td className="p-3"><Badge className="text-[10px] font-bold rounded">{l.estado}</Badge></td>
+                                                            <td className="p-3 text-right">
+                                                                <EditarLicenciaModal licencia={l} tipos={catalogos.tipos} onSuccess={refrescarLicencias} />
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            );
+                        })
                     )}
                 </div>
             </TabsContent>
+
 
             {/* PESTAÑA 4: HISTORIAL DE LICENCIAS ACTUALIZADA */}
             <TabsContent value="licDisponibles" className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs space-y-4">

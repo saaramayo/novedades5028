@@ -49,7 +49,7 @@ export default async function AsignacionesCRUDPage({ searchParams }: Props) {
                                     <Badge variant="outline" className="font-mono text-[10px] bg-slate-50">{a.situacion_revista}</Badge>
                                 </div>
                                 <p className="text-xs font-semibold text-slate-700">{a.materia_nombre}</p>
-                                <p className="text-[11px] text-slate-400 font-medium">{a.curso_nombre} - {a.division_nombre} ({a.cant_hs} horas)</p>
+                                <p className="text-[11px] text-slate-400 font-medium">{a.curso_nombre} - {a.division_nombre} ({a.cant_hs} horas)<span className="text-xs text-slate-400 font-mono block">Turno {a.turno}</span></p>
                                 <div className="flex justify-end pt-1">
                                     <EditarAsignacionModal asignacion={a} catalogos={catalogos} />
                                     <form action={async () => { 'use server'; await deleteAsignacionGeneral(a.id_asignacion); }}>
@@ -70,8 +70,8 @@ export default async function AsignacionesCRUDPage({ searchParams }: Props) {
                             <TableRow>
                                 <TableHead>Docente</TableHead>
                                 <TableHead>Materia Asignada</TableHead>
-                                <TableHead>Curso / División</TableHead>
-                                <TableHead>Situacion Revista</TableHead>
+                                <TableHead>Curso/División</TableHead>
+                                <TableHead>Situación Revista</TableHead>
                                 <TableHead className="text-right">Acción</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -83,9 +83,9 @@ export default async function AsignacionesCRUDPage({ searchParams }: Props) {
                             ) : (
                                 asignaciones.map((a: any) => (
                                     <TableRow key={a.id_asignacion}>
-                                        <TableCell className="font-semibold text-slate-900">{a.docente_agente} <span className="text-xs text-slate-400 font-mono block">CUIL: {a.cuil}</span></TableCell>
+                                        <TableCell className="font-semibold text-slate-900">{a.docente_agente} <span className="text-xs text-slate-400 font-mono block">DNI: {a.dni}</span></TableCell>
                                         <TableCell className="font-medium text-slate-700">{a.materia_nombre}</TableCell>
-                                        <TableCell className="text-slate-600">{a.curso_nombre} — <span className="font-bold">{a.division_nombre}</span> ({a.cant_hs} horas)</TableCell>
+                                        <TableCell className="text-slate-600">{a.curso_nombre} — <span className="font-bold">{a.division_nombre}</span> ({a.cant_hs} horas)<span className="text-xs text-slate-400 font-mono block">Turno {a.turno}</span></TableCell>
                                         <TableCell><Badge variant="outline" className="font-mono bg-slate-50">{a.situacion_revista}</Badge></TableCell>
                                         <TableCell className="text-right">
                                             <EditarAsignacionModal asignacion={a} catalogos={catalogos} />

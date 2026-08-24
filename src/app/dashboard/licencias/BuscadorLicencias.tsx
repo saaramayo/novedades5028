@@ -27,7 +27,7 @@ export default function BuscadorLicencias() {
         <div className="relative">
             <input
                 type="text"
-                placeholder="🔍 Buscar por Apellido o Artículo (Ej: Art. 42)..."
+                placeholder="🔍 Buscar por Agente, CUIL, Artículo o Turno ..."
                 defaultValue={searchParams.get('search') || ''}
                 onChange={(e) => handleSearch(e.target.value)}
                 className="w-full md:w-96 border p-2 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-400"
