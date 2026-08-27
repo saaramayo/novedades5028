@@ -50,16 +50,21 @@ export async function getDocentesFiltradosYPaginados(paginaActual: number, searc
 }
 
 export async function createDocente(prevState: any, formData: FormData) {
-    const nombre = formData.get('nombre') as string;
-    const apellido = formData.get('apellido') as string;
     const cuil = formData.get('cuil') as string;
     const dni = formData.get('dni') as string;
     const cargo = formData.get('cargo') as string;
+    const nombre = formData.get('nombre') as string;
+    const apellido = formData.get('apellido') as string;
+    const domicilio = formData.get('domicilio') as string;
+    const email = formData.get('email') as string;
+    const celular = formData.get('celular') as string;
+    const contacto = formData.get('contacto') as string;
+    const celular_contacto = formData.get('celular_contacto') as string;
 
     try {
         await query(
-            'INSERT INTO docentes (nombre, apellido, cuil, cargo) VALUES ($1, $2, $3, $4, $5)',
-            [nombre, apellido, dni, cuil, cargo]
+            'INSERT INTO docentes (nombre, apellido, dni, cuil, cargo, domicilio, email, celular, contacto, celular_contacto) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
+            [nombre, apellido, dni, cuil, cargo, domicilio, email, celular, contacto, celular_contacto]
         );
 
         revalidatePath('/dashboard/docentes');
@@ -67,7 +72,7 @@ export async function createDocente(prevState: any, formData: FormData) {
     } catch (err: any) {
         // Captura si se duplica un DNI o Legajo UNIQUE en PostgreSQL
         if (err.code === '23505') {
-            return { error: 'Error: Ya existe un docente registrado con ese DNI o Legajo.' };
+            return { error: 'Error: Ya existe un docente registrado con ese DNI o CUIL.' };
         }
         return { error: 'Ocurrió un problema al guardar el docente.' };
     }
@@ -89,14 +94,17 @@ export async function getDocenteCatedras(id_docente: number) {
                 a.situacion_revista,
                 a.fch_toma_posesion,
                 a.cant_hs,
-                a.dcto_res
+                a.dcto_res,
+                a.con_licencia,
+                a.descr_licencia
             FROM asignaciones a
             JOIN materias m ON a.id_materia = m.id_materia
             JOIN divisiones div ON a.id_division = div.id_division
             JOIN cursos c ON div.id_curso = c.id_curso
             JOIN turnos t ON t.id_turno = div.id_turno
             WHERE a.id_docente = $1
-            ORDER BY a.anio_lectivo DESC, t.id_turno ASC
+                AND a.baja = FALSE
+            ORDER BY t.id_turno ASC, div.orden ASC
         `;
         
         /*const text = `
@@ -126,7 +134,6 @@ export async function getDocenteCatedras(id_docente: number) {
 
 // 2. Modificar datos de filiación del docente
 export async function updateDocente(id_docente: number, formData: FormData) {
-    console.log(formData);
     const cuil = formData.get('cuil') as string;
     const dni = formData.get('dni') as string;
     const cargo = formData.get('cargo') as string;
@@ -242,12 +249,16 @@ export async function getLicenciasPorDocente(id_docente: number) {
 // Obtener la carga horaria del agente
 export async function getCargaHorariaPorDocente(id_docente: number) {
     const text = `
-        SELECT t.nombre, sum(cant_hs) AS cant_hs 
-            FROM docentes d JOIN asignaciones  a ON d.id_docente = a.id_docente
-            JOIN divisiones div ON a.id_division = div.id_division
-            JOIN turnos t ON div.id_turno = t.id_turno 
-            WHERE d.id_docente = $1 
-            GROUP BY t.nombre
+        SELECT 
+            t.nombre, 
+            sum(cant_hs) AS cant_hs, 
+            SUM(a.cant_hs) FILTER (WHERE a.con_licencia = true) AS hs_lic,
+            SUM(a.cant_hs) FILTER (WHERE a.con_licencia = false) AS hs_act
+        FROM docentes d JOIN asignaciones a ON d.id_docente = a.id_docente
+        JOIN divisiones div ON a.id_division = div.id_division
+        JOIN turnos t ON div.id_turno = t.id_turno 
+        WHERE d.id_docente = $1 
+        GROUP BY t.nombre
     `;
     const res = await query(text, [id_docente]);
     return res.rows;

@@ -154,8 +154,8 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                     <div className="space-y-1">
                         <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block print:text-slate-600">Carga Horaria</span>
                         {carga_horaria.map((ch) => (
-                            <Badge key={ch.nombre} variant="secondary" className="font-bold bg-slate-200/60 text-slate-800 rounded px-2.5 py-0.5 text-xs print:border print:border-slate-400 print:bg-white">
-                                {ch.nombre}: {ch.cant_hs} horas.
+                            <Badge key={ch.nombre} variant="secondary" className="font-bold bg-slate-200/60 text-slate-800 rounded px-2.5 py-0.5 text-xs print:border print:border-slate-400 print:bg-white block">
+                                {ch.nombre}: {ch.hs_act ? ch.hs_act + ' horas.' : ''} {ch.hs_lic ? '(Lic.: ' + ch.hs_lic + ' horas.)' : ''}
                             </Badge>
                         ))}
                     </div>
@@ -276,13 +276,17 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                                                         {c.curso_nombre} — <span className="text-slate-600 font-bold">{c.division_nombre}</span>
                                                     </p>
                                                 </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-sm font-semibold text-slate-800 truncate">{c.con_licencia ? 'Con lic. ' : ''}</p>
+                                                    <p className="text-[11px] text-slate-400 font-medium truncate">{c.con_licencia ? c.descr_licencia : ''}</p>
+                                                </div>
                                                 <div className="sm:w-36 shrink-0">
                                                     <p className="text-sm font-semibold text-slate-800">{c.cant_hs} horas</p>
                                                     <p className="text-[11px] text-slate-400 font-medium">T. de Pos.: {new Date(c.fch_toma_posesion).toLocaleDateString('es-AR')}</p>
                                                 </div>
                                                 <div className="sm:w-32 shrink-0">
-                                                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Instr. Legal</p>
-                                                    <p className="text-xs font-semibold text-slate-700 truncate">{c.dcto_res || '-'}</p>
+                                                    <p className="text-sm font-semibold text-slate-800">Instr. Legal</p>
+                                                    <p className="text-[11px] text-slate-400 font-medium truncate">{c.dcto_res || '-'}</p>
                                                 </div>
                                                 <div className="flex items-center justify-between sm:justify-end space-x-2 shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0">
                                                     <Badge variant="outline" className="font-mono text-[10px] text-slate-500 bg-slate-50">
@@ -413,10 +417,90 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
 
                 </div>
                 <div className="space-y-4">
-                    <p className="text-xs text-slate-400 text-center py-6 border border-dashed rounded-lg bg-slate-50/50">El agente no tiene artículos disponibles.</p>
                     <p>Art. 74: Cant. total según cantidad de horas - cantidad de horas consumidas</p>
                     <p>Art. 1185 Generados (Tabla con los 1185 disponibles)</p>
                     <p>Art. 99 (12 hs - cantidad de horas consumidas)</p>
+                </div>
+                <div className="space-y-6 pt-2">
+                    {catedras.length === 0 ? (
+                        <p className="text-xs text-slate-400 text-center py-8 border border-dashed rounded-lg bg-slate-50/50">
+                            El agente no registra materias dictadas en el ciclo actual.
+                        </p>
+                    ) : (
+                        // 1. Extraemos de forma única los nombres de los turnos presentes en tus datos (ej: "Mañana", "Tarde")
+                        Array.from(new Set(catedras.map(c => c.turno || 'Sin Especificar'))).map((nombreTurno) => {
+                            // 2. Filtramos las cátedras que corresponden estrictamente a este bloque de turno
+                            const catedrasDelTurno = catedras.filter(c => (c.turno || 'Sin Especificar') === nombreTurno);
+                            const datos = carga_horaria.find(e => e.nombre === nombreTurno)
+                            // Disponible Art 74
+                            let disp74 = 0;
+                            if (datos.hs_act <= 6)
+                                disp74 = 3;
+                            else if (datos.hs_act <= 12)
+                                disp74 = 6;
+                            else if (datos.hs_act <= 18)
+                                disp74 = 9;
+                            else
+                                disp74 = 12;
+
+                            //const datos = carga_horaria.find(e => e. ===)
+
+                            return (
+                                <div key={nombreTurno} className="space-y-2 border border-slate-100 rounded-xl p-4 bg-slate-50/40">
+                                    {/* Subcabecera del Turno */}
+                                    <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                                        <span className="text-xs font-bold text-slate-700 tracking-wide uppercase flex items-center">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-slate-500 mr-2"></span>
+                                            Turno {nombreTurno}
+                                        </span>
+                                        <Badge variant="outline" className="font-bold text-[10px] bg-white text-slate-500 font-mono">
+                                            {datos.hs_act} horas cátedra.
+                                        </Badge>
+
+                                    </div>
+
+                                    {/* Tarjetas del Turno */}
+                                    <div className="space-y-2 pt-1">
+                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 rounded-xl border border-slate-100 bg-white shadow-3xs gap-3">
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-semibold text-slate-800 truncate">Artículo 99</p>
+                                                <p className="text-slate-600 font-bold">
+                                                    Disponible: <span className="text-xs text-slate-400 font-medium">12 horas reloj por año.</span>
+                                                </p>
+                                                <p className="text-slate-600 font-bold">
+                                                    Consumido: <span className="text-xs text-slate-400 font-medium">...</span>
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 rounded-xl border border-slate-100 bg-white shadow-3xs gap-3">
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-semibold text-slate-800 truncate">Artículo 74</p>
+                                                <p className="text-slate-600 font-bold">
+                                                    Disponible: <span className="text-xs text-slate-400 font-medium">{disp74} horas cátedra.</span>
+                                                </p>
+                                                <p className="text-slate-600 font-bold">
+                                                    Consumido: <span className="text-xs text-slate-400 font-medium">...</span>
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 rounded-xl border border-slate-100 bg-white shadow-3xs gap-3">
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-semibold text-slate-800 truncate">Dcto. 1185 Artículo 2</p>
+                                                <p className="text-slate-600 font-bold">
+                                                    Disponible: <span className="text-xs text-slate-400 font-medium">Disponible</span>
+                                                </p>
+                                                <p className="text-slate-600 font-bold">
+                                                    Consumido: <span className="text-xs text-slate-400 font-medium">...</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })
+                    )}
                 </div>
             </TabsContent>
         </Tabs>

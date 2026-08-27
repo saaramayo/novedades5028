@@ -64,8 +64,11 @@ export async function getCatalogosDistribucion() {
         JOIN materias m ON a.id_materia = m.id_materia
         JOIN divisiones div ON a.id_division = div.id_division
         JOIN cursos c ON div.id_curso = c.id_curso
-        WHERE a.anio_lectivo = EXTRACT(YEAR FROM CURRENT_DATE)
+        WHERE a.baja = false AND a.con_licencia = false
+        ORDER BY d.apellido, d.nombre, div.orden
     `);
+
+    // WHERE a.anio_lectivo = EXTRACT(YEAR FROM CURRENT_DATE)
 
     const bloques = await query(`
         SELECT bc.id_bloque, bc.nombre_bloque, t.nombre AS turno, bc.hora_inicio, bc.hora_fin

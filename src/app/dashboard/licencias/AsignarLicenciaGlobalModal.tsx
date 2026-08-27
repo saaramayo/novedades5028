@@ -25,7 +25,7 @@ export default function AsignarLicenciaGlobalModal({ catalogos, onSuccess }: Alt
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger>
                 <div className="flex items-center px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-semibold hover:bg-slate-800 transition-colors shadow-2xs">
-                    <Plus className="w-4 h-4 mr-1.5" /> Solicitar Licencia General
+                    <Plus className="w-4 h-4 mr-1.5" /> Licencia General
                 </div>
             </DialogTrigger>
 
@@ -109,7 +109,7 @@ export default function AsignarLicenciaGlobalModal({ catalogos, onSuccess }: Alt
 
                             <div>
                                 <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Observaciones</label>
-                                <textarea name="observaciones" rows={3} placeholder="Detalles médicos..." className="w-full border p-2 rounded-lg text-sm resize-none" />
+                                <textarea name="observaciones" rows={3} placeholder="Detalles..." className="w-full border p-2 rounded-lg text-sm resize-none" />
                             </div>
                         </div>
                     </div>

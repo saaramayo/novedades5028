@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Trash2 } from 'lucide-react';
 import EditarAsignacionModal from './EditarAsignacionModal';
+import BotonExportar from './BotonExportar';
 
 interface Props { searchParams: Promise<{ page?: string; search?: string }>; }
 
@@ -25,6 +26,7 @@ export default async function AsignacionesCRUDPage({ searchParams }: Props) {
                     <h2 className="text-2xl font-semibold tracking-tight text-slate-900">Distribución de Materias</h2>
                     <p className="text-sm text-slate-500 font-medium">Asignación de materias y divisiones institucionales.</p>
                 </div>
+                <BotonExportar search={search} />
                 <AsignacionModal catalogos={catalogos} />
             </div>
 
@@ -48,7 +50,7 @@ export default async function AsignacionesCRUDPage({ searchParams }: Props) {
                                     <span className="font-bold text-slate-900 text-sm">{a.docente_agente}</span>
                                     <Badge variant="outline" className="font-mono text-[10px] bg-slate-50">{a.situacion_revista}</Badge>
                                 </div>
-                                <p className="text-xs font-semibold text-slate-700">{a.materia_nombre}</p>
+                                <p className="text-xs font-semibold text-slate-700 w-70 truncate">{a.materia_nombre} {a.con_licencia ? '(Con lic. ' + a.descr_licencia + ')' : ''}</p>
                                 <p className="text-[11px] text-slate-400 font-medium">{a.curso_nombre} - {a.division_nombre} ({a.cant_hs} horas)<span className="text-xs text-slate-400 font-mono block">Turno {a.turno}</span></p>
                                 <div className="flex justify-end pt-1">
                                     <EditarAsignacionModal asignacion={a} catalogos={catalogos} />
@@ -69,10 +71,10 @@ export default async function AsignacionesCRUDPage({ searchParams }: Props) {
                         <TableHeader className="bg-slate-50/70">
                             <TableRow>
                                 <TableHead>Docente</TableHead>
-                                <TableHead>Materia Asignada</TableHead>
+                                <TableHead>Materia</TableHead>
                                 <TableHead>Curso/División</TableHead>
                                 <TableHead>Situación Revista</TableHead>
-                                <TableHead className="text-right">Acción</TableHead>
+                                <TableHead className="text-center">Acción</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -84,10 +86,10 @@ export default async function AsignacionesCRUDPage({ searchParams }: Props) {
                                 asignaciones.map((a: any) => (
                                     <TableRow key={a.id_asignacion}>
                                         <TableCell className="font-semibold text-slate-900">{a.docente_agente} <span className="text-xs text-slate-400 font-mono block">DNI: {a.dni}</span></TableCell>
-                                        <TableCell className="font-medium text-slate-700">{a.materia_nombre}</TableCell>
+                                        <TableCell className="font-medium text-slate-700">{a.materia_nombre} <span className="text-xs text-slate-400 font-mono block w-30 truncate">{a.con_licencia ? 'Con lic. ' + a.descr_licencia : ''}</span></TableCell>
                                         <TableCell className="text-slate-600">{a.curso_nombre} — <span className="font-bold">{a.division_nombre}</span> ({a.cant_hs} horas)<span className="text-xs text-slate-400 font-mono block">Turno {a.turno}</span></TableCell>
                                         <TableCell><Badge variant="outline" className="font-mono bg-slate-50">{a.situacion_revista}</Badge></TableCell>
-                                        <TableCell className="text-right">
+                                        <TableCell className="text-center">
                                             <EditarAsignacionModal asignacion={a} catalogos={catalogos} />
                                             <form action={async () => { 'use server'; await deleteAsignacionGeneral(a.id_asignacion); }}>
                                                 <button type="submit" className="p-1.5 text-red-600 hover:bg-red-50 rounded-md transition-colors border border-transparent hover:border-red-100">

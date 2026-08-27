@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState } from 'react';
 import { updateAsignacionGeneral } from '@/actions/asignaciones';
-import { Pencil } from 'lucide-react';
+import { Pencil, AlertTriangle, UserMinus } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 interface EditarProps {
@@ -12,6 +12,9 @@ interface EditarProps {
 
 export default function EditarAsignacionModal({ asignacion, catalogos }: EditarProps) {
     const [open, setOpen] = useState(false);
+    const [licenciaActiva, setLicenciaActiva] = useState(asignacion.con_licencia === true);
+    const [bajaActiva, setBajaActiva] = useState(asignacion.baja === true);
+
     const [state, formAction, isPending] = useActionState(
         async (prevState: any, formData: FormData) => {
             const res = await updateAsignacionGeneral(asignacion.id_asignacion, formData);
@@ -29,7 +32,7 @@ export default function EditarAsignacionModal({ asignacion, catalogos }: EditarP
                 </button>
             </DialogTrigger>
 
-            <DialogContent className="w-[95%] sm:max-w-[600px] bg-white rounded-xl gap-0 p-0 overflow-hidden">
+            <DialogContent className="w-[95%] sm:max-w-[700px] bg-white rounded-xl gap-0 p-0 overflow-hidden">
                 <DialogHeader className="p-6 border-b border-slate-100 bg-white shrink-0">
                     <DialogTitle className="text-lg font-bold text-slate-900">Modificar Materia</DialogTitle>
                     <DialogDescription className="text-xs text-slate-500">Corrija las especificaciones normativas de la designación.</DialogDescription>
@@ -41,7 +44,7 @@ export default function EditarAsignacionModal({ asignacion, catalogos }: EditarP
 
                         <div className="space-y-3">
                             <div>
-                                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Docente</label>
+                                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Docente/Agente</label>
                                 <select name="id_docente" defaultValue={asignacion.id_docente} required className="w-full border p-2 rounded-lg text-sm bg-white">
                                     {catalogos.docentes.map(d => <option key={d.id_docente} value={d.id_docente}>{d.apellido}, {d.nombre}</option>)}
                                 </select>
@@ -50,7 +53,7 @@ export default function EditarAsignacionModal({ asignacion, catalogos }: EditarP
 
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-1">
                                 <div className="col-span-2">
-                                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Materia</label>
+                                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Materia/Cargo</label>
                                     <select name="id_materia" defaultValue={asignacion.id_materia} required className="w-full border p-2 rounded-lg text-sm bg-white">
                                         {catalogos.materias.map(m => <option key={m.id_materia} value={m.id_materia}>{m.nombre}</option>)}
                                     </select>
@@ -65,7 +68,7 @@ export default function EditarAsignacionModal({ asignacion, catalogos }: EditarP
                             {/* NUEVOS CAMPOS EDICIÓN */}
                             <div className="grid grid-cols-1 sm:grid-cols-4 gap-1">
                                 <div className="col-span-2">
-                                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Curso/División</label>
+                                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Curso/División/Turno</label>
                                     <select name="id_division" defaultValue={asignacion.id_division} required className="w-full border p-2 rounded-lg text-sm bg-white">
                                         {catalogos.divisiones.map(d => <option key={d.id_division} value={d.id_division}>{d.curso_nombre} - {d.division_nombre}</option>)}
                                     </select>
@@ -101,6 +104,54 @@ export default function EditarAsignacionModal({ asignacion, catalogos }: EditarP
                                     <input type="number" name="anio_lectivo" defaultValue={asignacion.anio_lectivo} required className="w-full border p-2 rounded-lg text-sm" />
                                 </div>
                             </div>
+
+                            {/* SECCIÓN NUEVA: CONTROL DE LICENCIA EN EDICIÓN */}
+                            <div className="pt-2 border-t border-slate-100">
+                                <div className="flex items-center space-x-2">
+                                    <input
+                                        type="checkbox"
+                                        name="con_licencia"
+                                        value="true"
+                                        id="edit_con_licencia"
+                                        checked={licenciaActiva}
+                                        onChange={(e) => setLicenciaActiva(e.target.checked)}
+                                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
+                                    />
+                                    <label htmlFor="edit_con_licencia" className="text-xs font-bold text-slate-700 select-none flex items-center">
+                                        <AlertTriangle className="w-3.5 h-3.5 text-amber-500 mr-1" /> ¿Esta cátedra posee licencia activa?
+                                    </label>
+                                </div>
+
+                                {licenciaActiva && (
+                                    <div className="mt-2">
+                                        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Motivo/Descripción de la Licencia</label>
+                                        <textarea name="descr_licencia" defaultValue={asignacion.descr_licencia || ''} rows={3} required={licenciaActiva} placeholder="Detalles..." className="w-full border p-1.5 border-amber-200 bg-amber-50/20 rounded-lg text-xs resize-none focus:outline-none" />
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* NUEVO: Checkbox Baja Curricular */}
+                            <div className="space-y-1">
+                                <div className="flex items-center space-x-2">
+                                    <input
+                                        type="checkbox"
+                                        name="baja"
+                                        value="true"
+                                        id="alta_baja"
+                                        checked={bajaActiva}
+                                        onChange={(e) => setBajaActiva(e.target.checked)}
+                                        className="rounded border-slate-300 text-red-600 focus:ring-red-500 h-4 w-4"
+                                    />
+                                    <label htmlFor="alta_baja" className="text-xs font-bold text-slate-700 select-none flex items-center">
+                                        <UserMinus className="w-3.5 h-3.5 text-red-500 mr-1 shrink-0" /> ¿Dar de Baja?
+                                    </label>
+                                </div>
+                                {bajaActiva && (
+                                    <textarea name="motivo_baja" defaultValue={asignacion.motivo_baja || ''} rows={3} required={bajaActiva} placeholder="Ej: Renuncia / Traslado" className="w-full border p-1.5 border-red-200 bg-red-50/10 rounded-lg text-xs resize-none focus:outline-none" />
+                                )}
+                            </div>
+
+
                         </div>
                     </div>
                     <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end space-x-2 shrink-0">

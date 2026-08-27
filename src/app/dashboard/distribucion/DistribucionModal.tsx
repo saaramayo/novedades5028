@@ -20,7 +20,7 @@ export default function DistribucionModal({ catalogos }: { catalogos: any }) {
                     <CalendarPlus className="w-4 h-4 mr-2" /> Agendar Bloque
                 </div>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px] bg-white rounded-xl">
+            <DialogContent className="sm:max-w-[600px] bg-white rounded-xl">
                 <DialogHeader>
                     <DialogTitle className="text-lg font-bold text-slate-900 flex items-center">
                         <Clock className="w-5 h-5 mr-2 text-slate-500" /> Agendar Bloque Horario
@@ -42,9 +42,9 @@ export default function DistribucionModal({ catalogos }: { catalogos: any }) {
                             </select>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-2 gap-1">
                             <div>
-                                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Día Semanal</label>
+                                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Día</label>
                                 <select name="dia_semana" required className="w-full border p-2 rounded-lg text-sm bg-white">
                                     <option value="Lunes">Lunes</option>
                                     <option value="Martes">Martes</option>
@@ -54,7 +54,7 @@ export default function DistribucionModal({ catalogos }: { catalogos: any }) {
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Bloque / Franja</label>
+                                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Horario</label>
                                 <select name="id_bloque" required className="w-full border p-2 rounded-lg text-sm bg-white">
                                     <option value="">Seleccione bloque...</option>
                                     {catalogos.bloques.map((b: any) => (

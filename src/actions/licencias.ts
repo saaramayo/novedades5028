@@ -38,7 +38,7 @@ export async function getLicenciasFiltradasYPaginadas(pagina: number = 1, termin
             SELECT 
                 s.id_solicitud, s.id_docente, s.id_tipo_licencia, s.id_turno,
                 s.fecha_inicio, s.fecha_fin, s.tiempo, s.descr_tiempo, s.estado,
-                s.letra, s.asignatura_cargo,
+                s.letra, s.asignatura_cargo, s.observaciones,
                 CONCAT(d.apellido, ' ', d.nombre) AS agente,
                 tl.articulo, tl.denominacion, t.nombre AS turno
             FROM solicitudes_licencias s

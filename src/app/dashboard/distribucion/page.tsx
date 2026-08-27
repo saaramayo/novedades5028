@@ -66,10 +66,10 @@ export default async function DistribucionPage({ searchParams }: Props) {
                     <Table>
                         <TableHeader className="bg-slate-50/70">
                             <TableRow>
-                                <TableHead>Día / Bloque</TableHead>
-                                <TableHead>Materia / Curso</TableHead>
-                                <TableHead>Docente Dictante</TableHead>
-                                <TableHead>Horario exacto</TableHead>
+                                <TableHead>Día/Bloque</TableHead>
+                                <TableHead>Materia/Curso</TableHead>
+                                <TableHead>Docente</TableHead>
+                                <TableHead>Horario</TableHead>
                                 <TableHead className="text-right">Acción</TableHead>
                             </TableRow>
                         </TableHeader>
