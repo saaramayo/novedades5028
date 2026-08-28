@@ -18,7 +18,7 @@ export async function getDocentesFiltradosYPaginados(paginaActual: number, searc
 
         registrosQuery = `
           SELECT * FROM docentes 
-            WHERE apellido ILIKE $1 OR cuil ILIKE $1 OR cargo ILIKE $1
+            WHERE apellido ILIKE $1 OR cuil ILIKE $1 OR cargo ILIKE $1 OR tipo_cargo ILIKE $1 
             ORDER BY apellido, nombre 
             LIMIT $2 OFFSET $3
         `;
@@ -63,7 +63,7 @@ export async function createDocente(prevState: any, formData: FormData) {
 
     try {
         await query(
-            'INSERT INTO docentes (nombre, apellido, dni, cuil, cargo, domicilio, email, celular, contacto, celular_contacto) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
+            'INSERT INTO docentes (nombre, apellido, dni, cuil, cargo, domicilio, email, celular, contacto, celular_contacto) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)',
             [nombre, apellido, dni, cuil, cargo, domicilio, email, celular, contacto, celular_contacto]
         );
 
@@ -106,7 +106,7 @@ export async function getDocenteCatedras(id_docente: number) {
                 AND a.baja = FALSE
             ORDER BY t.id_turno ASC, div.orden ASC
         `;
-        
+
         /*const text = `
             SELECT a.id_asignacion, bc.id_turno, 
                 a.id_asignacion, a.anio_lectivo, a.situacion_revista, a.cant_hs, a.fch_toma_posesion, a.fch_cese, a.dcto_res,
@@ -148,8 +148,8 @@ export async function updateDocente(id_docente: number, formData: FormData) {
     try {
         const text = `
             UPDATE docentes 
-            SET nombre = $1, apellido = $2, cuil = $3, dni = $4, cargo = $5, 
-                domicilio = $6, email = $7, celular = $8, 
+            SET nombre = $1, apellido = $2, cuil = $3, dni = $4, 
+                cargo = $5, domicilio = $6, email = $7, celular = $8, 
                 contacto = $9, celular_contacto = $10 
             WHERE id_docente = $11
         `;
@@ -250,6 +250,31 @@ export async function getLicenciasPorDocente(id_docente: number) {
 export async function getCargaHorariaPorDocente(id_docente: number) {
     const text = `
         SELECT 
+            c.nombre_cargo,
+            t.nombre AS turno,
+            sum(dc.cant_hs) AS cant_hs, 
+            SUM(dc.cant_hs) FILTER (WHERE dc.con_licencia = true) AS hs_lic,
+            SUM(dc.cant_hs) FILTER (WHERE dc.con_licencia = false) AS hs_act
+        FROM docentes d JOIN docentes_cargos dc ON d.id_docente = dc.id_docente
+        JOIN cargos c ON dc.id_cargo = c.id_cargo
+        JOIN turnos t ON dc.id_turno = t.id_turno
+        WHERE d.id_docente = $1 
+        GROUP BY c.nombre_cargo, t.nombre
+        UNION
+        SELECT 'Docente' AS nombre_cargo,
+            t.nombre AS turno, 
+            sum(cant_hs) AS cant_hs, 
+            SUM(a.cant_hs) FILTER (WHERE a.con_licencia = true) AS hs_lic,
+            SUM(a.cant_hs) FILTER (WHERE a.con_licencia = false) AS hs_act
+        FROM docentes d JOIN asignaciones a ON d.id_docente = a.id_docente
+        JOIN divisiones div ON a.id_division = div.id_division
+        JOIN turnos t ON div.id_turno = t.id_turno 
+        WHERE d.id_docente = $1 
+        GROUP BY nombre_cargo, t.nombre
+    `;
+
+    /*const text = `
+        SELECT 
             t.nombre, 
             sum(cant_hs) AS cant_hs, 
             SUM(a.cant_hs) FILTER (WHERE a.con_licencia = true) AS hs_lic,
@@ -259,7 +284,7 @@ export async function getCargaHorariaPorDocente(id_docente: number) {
         JOIN turnos t ON div.id_turno = t.id_turno 
         WHERE d.id_docente = $1 
         GROUP BY t.nombre
-    `;
+    `;*/
     const res = await query(text, [id_docente]);
     return res.rows;
 }
@@ -281,4 +306,21 @@ export async function buscarSugerenciasAgentes(termino: string) {
         console.error('Error al buscar sugerencias:', error);
         return [];
     }
+}
+
+export async function getArt74DisponibleDocente(id_docente: number) {
+    try {
+        const text = `
+            SELECT id_turno, sum(tiempo), descr_tiempo 
+            FROM solicitudes_licencias
+            WHERE id_tipo_licencia = 6 and id_docente = 1
+            GROUP BY id_turno, descr_tiempo
+        `;
+        const res = await query(text, [id_docente]);
+        return res.rows;
+    } catch (error) {
+        console.error('Error al buscar sugerencias:', error);
+        return [];
+    }
+
 }

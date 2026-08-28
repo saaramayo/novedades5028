@@ -35,9 +35,8 @@ export default function AsignarCatedraModal({ idDocente, catalogos, onSuccess }:
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger>
-                <div className="flex items-center px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 transition-colors shadow-xs ml-auto">
-                    <Plus className="w-3.5 h-3.5 mr-1" />
-                    Asignar Cátedra
+                <div className="flex items-center px-3 py-1.5 bg-slate-900 text-white rounded-lg text-xs font-semibold hover:bg-slate-800 transition-colors shadow-sm ml-auto">
+                    <Plus className="w-3.5 h-3.5 mr-1" /> Cátedra
                 </div>
             </DialogTrigger>
 

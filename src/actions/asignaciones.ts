@@ -100,13 +100,18 @@ export async function createAsignacionGeneral(prevState: any, formData: FormData
         revalidatePath('/dashboard/asignaciones');
         return { success: true, error: null };
     } catch (error) {
-        return { error: 'Error al insertar la asignación en PostgreSQL.' };
+        return { error: 'Error al insertar la asignación.' };
     }
 }
 
 export async function deleteAsignacionGeneral(id: number) {
-    await query('DELETE FROM asignaciones WHERE id_asignacion = $1', [id]);
-    revalidatePath('/dashboard/asignaciones');
+    try {
+        await query('DELETE FROM asignaciones WHERE id_asignacion = $1', [id]);
+        revalidatePath('/dashboard/asignaciones');
+        return { success: true, error: null };
+    } catch (error) {
+        return { error: 'Error al eliminar la asignación.' };
+    }
 }
 
 export async function updateAsignacionGeneral(id_asignacion: number, formData: FormData) {

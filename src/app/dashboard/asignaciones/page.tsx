@@ -114,6 +114,6 @@ export default async function AsignacionesCRUDPage({ searchParams }: Props) {
                 </div>
 
             </div>
-        </div>
+        </div >
     );
 }

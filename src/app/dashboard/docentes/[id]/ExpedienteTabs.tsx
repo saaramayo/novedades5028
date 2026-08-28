@@ -19,6 +19,9 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import AsignarCargoModal from './AsignarCargoModal';
+import { deleteCargoDocente, getCargosPorDocente } from '@/actions/cargos';
+import EditarCargoModal from './EditarCargoModal';
 
 interface ExpedienteProps {
     docente: any;
@@ -26,10 +29,14 @@ interface ExpedienteProps {
     licencias: any[];
     catalogos: { materias: any[], divisiones: any[], tipos: any[] };
     carga_horaria: any[];
+    cargosIniciales: any[];
+    catalogosCargos: { cargos: any[], turnos: any[] };
 }
 
-export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, catalogos, carga_horaria }: ExpedienteProps) {
+export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, catalogos, carga_horaria, cargosIniciales, catalogosCargos }: ExpedienteProps) {
     const [catedras, setCatedras] = useState(catedrasIniciales);
+    //const [catalogosCargos, setCatalogosCargos] = useState(cargosIniciales);
+    const [cargosLista, setCargosLista] = useState(cargosIniciales);
 
     // Formulario Datos Personales
     const [state, formAction, isPending] = useActionState(
@@ -57,12 +64,28 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
         });
     };
 
+    const refrescarCargos = () => {
+        startTransition(async () => {
+            const data = await getCargosPorDocente(docente.id_docente);
+            setCargosLista(data);
+        });
+    };
+
 
     const handleEliminarAsignacion = async (id_asignacion: number) => {
         if (confirm('¿Está seguro de remover esta cátedra al docente?')) {
             const res = await desasignarMateriaDocente(id_asignacion);
             if (res?.error) alert(res.error);
             else refrescarCatedras();
+        }
+    };
+
+    //handleEliminarCargo(item.id_docente_cargo)
+    const handleEliminarCargo = async (id_docente_cargo: number) => {
+        if (confirm('¿Está seguro de remover este cargo al docente?')) {
+            const res = await deleteCargoDocente(id_docente_cargo, docente.id_docente)
+            if (res?.error) alert(res.error);
+            else refrescarCargos();
         }
     };
 
@@ -115,8 +138,6 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
             </TabsList>
 
 
-
-
             {/* PESTAÑA 1: DATOS PERSONALES */}
             <TabsContent value="personales" className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs space-y-6">
 
@@ -146,18 +167,18 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                 {/* CONTENEDOR DE DATOS: Ajustado con estilos print: para formato papel A4 */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm pt-2 print:grid-cols-2 print:gap-4">
                     <div className="space-y-1">
-                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block print:text-slate-600">Cargo</span>
-                        <Badge variant="secondary" className="font-bold bg-slate-200/60 text-slate-800 rounded px-2.5 py-0.5 text-xs print:border print:border-slate-400 print:bg-white">
-                            {docente.cargo}
-                        </Badge>
-                    </div>
-                    <div className="space-y-1">
-                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block print:text-slate-600">Carga Horaria</span>
+                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block print:text-slate-600">Cargo/Carga Horaria</span>
                         {carga_horaria.map((ch) => (
                             <Badge key={ch.nombre} variant="secondary" className="font-bold bg-slate-200/60 text-slate-800 rounded px-2.5 py-0.5 text-xs print:border print:border-slate-400 print:bg-white block">
-                                {ch.nombre}: {ch.hs_act ? ch.hs_act + ' horas.' : ''} {ch.hs_lic ? '(Lic.: ' + ch.hs_lic + ' horas.)' : ''}
+                                {ch.nombre_cargo} | {ch.turno}: {ch.hs_act ? ch.hs_act + ' horas.' : ''} {ch.hs_lic ? '(Lic.: ' + ch.hs_lic + ' horas.)' : ''}
                             </Badge>
                         ))}
+                    </div>
+                    <div className="space-y-1">
+                        {/*<span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block print:text-slate-600">Cargo</span>
+                        <Badge variant="secondary" className="font-bold bg-slate-200/60 text-slate-800 rounded px-2.5 py-0.5 text-xs print:border print:border-slate-400 print:bg-white">
+                            {docente.cargo}
+                        </Badge>*/}
                     </div>
                     <div className="space-y-1">
                         <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block print:text-slate-600">Número de CUIL</span>
@@ -227,9 +248,86 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
 
             {/* PESTAÑA 2: ASIGNACIONES CURRICULARES ACTUALIZADA */}
             <TabsContent value="asignaciones" className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs space-y-6">
+
+                <div className="pt-6 border-t border-slate-100 space-y-4">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h3 className="text-base font-bold text-slate-900 uppercase">Cargos de planta</h3>
+                            <p className="text-xs text-slate-400 font-medium">Designaciones administrativas y de planta técnica del agente.</p>
+                        </div>
+
+                        {/* MODAL DE ALTA DE CARGOS */}
+                        <AsignarCargoModal
+                            idDocente={docente.id_docente}
+                            catalogos={catalogosCargos} // Debés proveer los catálogos de cargos desde tu page de servidor
+                            onSuccess={refrescarCargos}
+                        />
+                    </div >
+
+                    <div className="grid grid-cols-1 gap-2.5">
+                        {cargosLista.length === 0 ? (
+                            <p className="text-xs text-slate-400 italic py-4 text-center border border-dashed rounded-lg bg-slate-50/50">El agente no posee cargos administrativos vinculados actualmente.</p>
+                        ) : (
+                            cargosLista.map((item: any) => (
+                                <div key={item.id_docente_cargo} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 rounded-xl border border-slate-100 bg-white shadow-3xs gap-3">
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center space-x-2">
+                                            <p className="text-sm font-bold text-slate-800 truncate">{item.nombre_cargo}</p>
+                                            <span className="text-xs font-mono font-bold text-slate-500">({item.cant_hs} hs)</span>
+
+                                            {/* Badge condicional Dec. 1185 */}
+                                            {item.genera_1185 && (
+                                                <Badge className="bg-purple-50 border border-purple-200 text-purple-700 text-[9px] font-bold rounded px-1.5 py-0.5">
+                                                    ⚖ Dec. 1185
+                                                </Badge>
+                                            )}
+
+                                            {/* Badge condicional Licencia activa */}
+                                            {item.con_licencia && (
+                                                <Badge className="bg-amber-50 border border-amber-200 text-amber-700 text-[9px] font-bold rounded px-1.5 py-0.5" title={item.descr_licencia}>
+                                                    ⚠️ Licencia Activa
+                                                </Badge>
+                                            )}
+                                        </div>
+                                        <p className="text-xs text-slate-400 font-medium">Turno: <span className="text-slate-600 font-bold">{item.turno_nombre}</span></p>
+                                    </div>
+                                    <div className="sm:w-36 shrink-0">
+                                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Toma de Posesión</span>
+                                        <p className="text-xs font-semibold text-slate-700">{new Date(item.fch_toma_posesion).toLocaleDateString('es-AR')}</p>
+                                    </div>
+                                    <div className="sm:w-32 shrink-0">
+                                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Resolución</span>
+                                        <p className="text-xs font-mono font-semibold text-slate-700 truncate">{item.dcto_res || '-'}</p>
+                                    </div>
+                                    <div className="flex items-center justify-between sm:justify-end space-x-3 shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0">
+                                        <Badge variant="outline" className="font-mono text-[10px] text-slate-600 bg-slate-50 font-bold px-2 py-0.5 rounded">{item.situacion_revista}</Badge>
+
+                                        {/* NUEVO MODAL DE EDICIÓN PROPIO PARA CARGOS */}
+                                        <EditarCargoModal
+                                            idDocente={docente.id_docente}
+                                            item={item}
+                                            catalogos={catalogosCargos} // Mismos catálogos pasados al alta
+                                            onSuccess={refrescarCargos}
+                                        />
+
+                                        <button
+                                            type="button"
+                                            onClick={() => handleEliminarCargo(item.id_docente_cargo)}
+                                            className="p-1.5 text-red-600 hover:bg-red-50 rounded-md transition-colors border border-transparent hover:border-red-100"
+                                            title="Dar de baja cargo"
+                                        >
+                                            <Trash2 className="w-3.5 h-3.5" />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div >
+
                 <div className="flex items-center justify-between">
                     <div>
-                        <h3 className="text-base font-bold text-slate-900">Planificación de Materias</h3>
+                        <h3 className="text-base font-bold text-slate-900 uppercase">Cargos docentes</h3>
                         <p className="text-xs text-slate-400 font-medium">Cursos y materias dictados por el docente.</p>
                     </div>
 
@@ -309,11 +407,14 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                         })
                     )}
                 </div>
-            </TabsContent>
+
+
+
+            </TabsContent >
 
 
             {/* PESTAÑA 3: HISTORIAL DE LICENCIAS ACTUALIZADA */}
-            <TabsContent value="licencias" className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs space-y-6">
+            < TabsContent value="licencias" className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs space-y-6" >
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div>
                         <h3 className="text-base font-bold text-slate-900">Historial de Artículos Solicitados</h3>
@@ -404,11 +505,11 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                         })
                     )}
                 </div>
-            </TabsContent>
+            </TabsContent >
 
 
             {/* PESTAÑA 4: HISTORIAL DE LICENCIAS ACTUALIZADA */}
-            <TabsContent value="licDisponibles" className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs space-y-4">
+            < TabsContent value="licDisponibles" className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs space-y-4" >
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div>
                         <h3 className="text-base font-bold text-slate-900">Articulos Disponibles</h3>
@@ -431,10 +532,12 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                         Array.from(new Set(catedras.map(c => c.turno || 'Sin Especificar'))).map((nombreTurno) => {
                             // 2. Filtramos las cátedras que corresponden estrictamente a este bloque de turno
                             const catedrasDelTurno = catedras.filter(c => (c.turno || 'Sin Especificar') === nombreTurno);
-                            const datos = carga_horaria.find(e => e.nombre === nombreTurno)
+                            const datos = carga_horaria.find(e => e.turno === nombreTurno)
                             // Disponible Art 74
                             let disp74 = 0;
-                            if (datos.hs_act <= 6)
+                            if (datos.hs_act == null)
+                                disp74 = 0
+                            else if (datos.hs_act <= 6)
                                 disp74 = 3;
                             else if (datos.hs_act <= 12)
                                 disp74 = 6;
@@ -465,10 +568,13 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-sm font-semibold text-slate-800 truncate">Artículo 99</p>
                                                 <p className="text-slate-600 font-bold">
-                                                    Disponible: <span className="text-xs text-slate-400 font-medium">12 horas reloj por año.</span>
+                                                    Habilitado por Dcto. 4118: <span className="text-xs text-slate-400 font-medium">12 horas reloj por año.</span>
                                                 </p>
                                                 <p className="text-slate-600 font-bold">
                                                     Consumido: <span className="text-xs text-slate-400 font-medium">...</span>
+                                                </p>
+                                                <p className="text-slate-600 font-bold">
+                                                    Disponible: <span className="text-xs text-slate-400 font-medium">12 horas reloj por año.</span>
                                                 </p>
                                             </div>
                                         </div>
@@ -477,10 +583,13 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-sm font-semibold text-slate-800 truncate">Artículo 74</p>
                                                 <p className="text-slate-600 font-bold">
-                                                    Disponible: <span className="text-xs text-slate-400 font-medium">{disp74} horas cátedra.</span>
+                                                    Habilitado por Dcto. 4118: <span className="text-xs text-slate-400 font-medium">{disp74} horas cátedra.</span>
                                                 </p>
                                                 <p className="text-slate-600 font-bold">
                                                     Consumido: <span className="text-xs text-slate-400 font-medium">...</span>
+                                                </p>
+                                                <p className="text-slate-600 font-bold">
+                                                    Disponible: <span className="text-xs text-slate-400 font-medium">{disp74} horas cátedra.</span>
                                                 </p>
                                             </div>
                                         </div>
@@ -489,11 +598,15 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-sm font-semibold text-slate-800 truncate">Dcto. 1185 Artículo 2</p>
                                                 <p className="text-slate-600 font-bold">
-                                                    Disponible: <span className="text-xs text-slate-400 font-medium">Disponible</span>
+                                                    Habilitado por Dcto. 4118: <span className="text-xs text-slate-400 font-medium">Disponible</span>
                                                 </p>
                                                 <p className="text-slate-600 font-bold">
                                                     Consumido: <span className="text-xs text-slate-400 font-medium">...</span>
                                                 </p>
+                                                <p className="text-slate-600 font-bold">
+                                                    Disponible: <span className="text-xs text-slate-400 font-medium">{disp74} horas cátedra.</span>
+                                                </p>
+
                                             </div>
                                         </div>
                                     </div>
@@ -502,8 +615,8 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                         })
                     )}
                 </div>
-            </TabsContent>
-        </Tabs>
+            </TabsContent >
+        </Tabs >
     );
 }
 
@@ -567,7 +680,6 @@ function DialogModalEdicion({ Docente, FormAction, IsPending, State }: any) {
                                     <input type="text" name="apellido" defaultValue={Docente.apellido} required className="w-full border p-2 rounded-lg text-sm bg-white focus:ring-2 focus:ring-slate-400 focus:outline-none" />
                                 </div>
                             </div>
-
                             <div>
                                 <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cargo</label>
                                 <input type="text" name="cargo" defaultValue={Docente.cargo} required className="w-full border p-2 rounded-lg text-sm bg-white focus:ring-2 focus:ring-slate-400 focus:outline-none" />
