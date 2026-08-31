@@ -101,7 +101,7 @@ export default function AsignarCargoModal({ idDocente, catalogos, onSuccess }: C
                             {/* CONTROLES EXCEPCIONALES DE COMPATIBILIDAD Y RELEVOS */}
                             <div className="pt-3 border-t border-slate-100 space-y-3">
                                 {/* Checkbox Incompatibilidad Dec. 1185 */}
-                                <div className="flex items-center space-x-2">
+                                {/*<div className="flex items-center space-x-2">
                                     <input
                                         type="checkbox"
                                         name="genera_1185"
@@ -112,7 +112,7 @@ export default function AsignarCargoModal({ idDocente, catalogos, onSuccess }: C
                                     <label htmlFor="alta_1185" className="text-xs font-bold text-slate-700 flex items-center cursor-pointer select-none">
                                         <ShieldCheck className="w-3.5 h-3.5 text-purple-500 mr-1" /> ¿Genera 1185?
                                     </label>
-                                </div>
+                                </div>*/}
 
                                 {/* Checkbox Licencia */}
                                 <div className="space-y-2">

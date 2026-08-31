@@ -324,3 +324,39 @@ export async function getArt74DisponibleDocente(id_docente: number) {
     }
 
 }
+
+
+export async function getHorarioAgendaDocente(id_docente: number) {
+    try {
+        // 1. Traer todos los bloques horarios ordenados
+        const bloquesRes = await query(`
+            SELECT bc.id_bloque, bc.nombre_bloque, bc.hora_inicio, bc.hora_fin, t.nombre AS turno
+            FROM bloques_clase bc
+            JOIN turnos t ON bc.id_turno = t.id_turno
+            ORDER BY t.nombre DESC, bc.hora_inicio ASC
+        `);
+
+        // 2. Traer la distribución semanal de clases asignadas a ESTE docente en particular
+        const agendaRes = await query(`
+            SELECT 
+                ds.dia_semana, ds.id_bloque,
+                m.nombre AS materia_nombre,
+                c.nombre AS curso_nombre, div.nombre AS division_nombre
+            FROM distribucion_semanal ds
+            JOIN asignaciones a ON ds.id_asignacion = a.id_asignacion
+            JOIN materias m ON a.id_materia = m.id_materia
+            JOIN divisiones div ON a.id_division = div.id_division
+            JOIN cursos c ON div.id_curso = c.id_curso
+            WHERE a.id_docente = $1 AND a.baja = FALSE 
+                AND a.anio_lectivo = EXTRACT(YEAR FROM CURRENT_DATE)
+        `, [id_docente]);
+
+        return {
+            bloques: bloquesRes.rows,
+            agenda: agendaRes.rows
+        };
+    } catch (error) {
+        console.error('Error al generar agenda del docente:', error);
+        return { bloques: [], agenda: [] };
+    }
+}

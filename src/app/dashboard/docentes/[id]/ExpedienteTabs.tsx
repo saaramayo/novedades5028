@@ -10,7 +10,6 @@ import AsignarLicenciaModal from './AsignarLicenciaModal';
 import EditarLicenciaModal from './EditarLicenciaModal';
 import { getLicenciasPorDocente } from '@/actions/docentes';
 
-
 import {
     Dialog,
     DialogContent,
@@ -22,6 +21,11 @@ import {
 import AsignarCargoModal from './AsignarCargoModal';
 import { deleteCargoDocente, getCargosPorDocente } from '@/actions/cargos';
 import EditarCargoModal from './EditarCargoModal';
+import AgendaHorariaDocente from './AgendaHorariaDocente';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+
+
+
 
 interface ExpedienteProps {
     docente: any;
@@ -31,9 +35,11 @@ interface ExpedienteProps {
     carga_horaria: any[];
     cargosIniciales: any[];
     catalogosCargos: { cargos: any[], turnos: any[] };
+    agendaHoraria: { bloques: any[], agenda: any[] };
+    consumoLicencias: any[];
 }
 
-export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, catalogos, carga_horaria, cargosIniciales, catalogosCargos }: ExpedienteProps) {
+export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, catalogos, carga_horaria, cargosIniciales, catalogosCargos, agendaHoraria, consumoLicencias }: ExpedienteProps) {
     const [catedras, setCatedras] = useState(catedrasIniciales);
     //const [catalogosCargos, setCatalogosCargos] = useState(cargosIniciales);
     const [cargosLista, setCargosLista] = useState(cargosIniciales);
@@ -120,6 +126,15 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                 </TabsTrigger>
 
                 <TabsTrigger
+                    value="horarios"
+                    className="flex items-center justify-center text-xs font-semibold px-4 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm w-full"
+                >
+                    <BookOpen className="w-3.5 h-3.5 mr-2 text-slate-500 shrink-0" />
+                    <span>Horarios</span>
+                </TabsTrigger>
+
+
+                <TabsTrigger
                     value="licencias"
                     className="flex items-center justify-center text-xs font-semibold px-4 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm w-full"
                 >
@@ -169,7 +184,7 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                     <div className="space-y-1">
                         <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block print:text-slate-600">Cargo/Carga Horaria</span>
                         {carga_horaria.map((ch) => (
-                            <Badge key={ch.nombre} variant="secondary" className="font-bold bg-slate-200/60 text-slate-800 rounded px-2.5 py-0.5 text-xs print:border print:border-slate-400 print:bg-white block">
+                            <Badge key={ch.nombre_cargo + ch.turno} variant="secondary" className="font-bold bg-slate-200/60 text-slate-800 rounded px-2.5 py-0.5 text-xs print:border print:border-slate-400 print:bg-white block">
                                 {ch.nombre_cargo} | {ch.turno}: {ch.hs_act ? ch.hs_act + ' horas.' : ''} {ch.hs_lic ? '(Lic.: ' + ch.hs_lic + ' horas.)' : ''}
                             </Badge>
                         ))}
@@ -412,8 +427,15 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
 
             </TabsContent >
 
+            {/* PESTAÑA 3: HORARIOS DEL DOCENTE */}
+            <TabsContent value="horarios" className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs space-y-6">
+                <AgendaHorariaDocente
+                    bloques={agendaHoraria.bloques}
+                    agenda={agendaHoraria.agenda}
+                />
+            </TabsContent >
 
-            {/* PESTAÑA 3: HISTORIAL DE LICENCIAS ACTUALIZADA */}
+            {/* PESTAÑA 4: HISTORIAL DE LICENCIAS ACTUALIZADA */}
             < TabsContent value="licencias" className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs space-y-6" >
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                     <div>
@@ -508,114 +530,63 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
             </TabsContent >
 
 
-            {/* PESTAÑA 4: HISTORIAL DE LICENCIAS ACTUALIZADA */}
-            < TabsContent value="licDisponibles" className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs space-y-4" >
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                    <div>
-                        <h3 className="text-base font-bold text-slate-900">Articulos Disponibles</h3>
-                        <p className="text-xs text-slate-400 font-medium">Informe de articulos disponibles bajo Decreto 4118/97.</p>
+            {/* PESTAÑA 5: AUDITORÍA DE TIEMPOS UTILIZADOS */}
+            <TabsContent value="licDisponibles" className="bg-white p-6 rounded-xl border border-slate-200 shadow-2xs space-y-6">
+                <div className="border-b border-slate-100 pb-3">
+                    <h3 className="text-base font-bold text-slate-900">Consumo Acumulado de Licencias</h3>
+                    <p className="text-xs text-slate-400 font-medium">Historial consolidado de días utilizados según cada encuadre reglamentario y franja horaria.</p>
+                </div>
+
+                {consumoLicencias.length === 0 ? (
+                    <p className="text-xs text-slate-400 text-center py-8 border border-dashed rounded-lg bg-slate-50/50">
+                        El agente no registra días de licencias usufructuados o aprobados en el sistema.
+                    </p>
+                ) : (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+
+                        {/* LADO IZQUIERDO: Tabla Analítica Adaptativa */}
+                        <div className="bg-white rounded-xl border overflow-hidden text-sm">
+                            <table className="w-full text-left border-collapse">
+                                <thead className="bg-slate-50/70 border-b">
+                                    <tr>
+                                        <th className="p-3 font-semibold text-slate-600 text-xs uppercase">Turno</th>
+                                        <th className="p-3 font-semibold text-slate-600 text-xs uppercase">Artículo</th>
+                                        <th className="p-3 font-semibold text-slate-600 text-xs uppercase text-right">4118</th>
+                                        <th className="p-3 font-semibold text-slate-600 text-xs uppercase text-right">Tiempo</th>
+                                        <th className="p-3 font-semibold text-slate-600 text-xs uppercase text-right">Disponible</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100">
+                                    {consumoLicencias.map((c: any, index: number) => (
+                                        <tr key={index} className="hover:bg-slate-50/50 transition-colors">
+                                            <td className="p-3 font-medium text-slate-700 capitalize">{c.turno_nombre.toLowerCase()}</td>
+                                            <td className="p-3">
+                                                <Badge variant="outline" className="font-mono font-bold bg-slate-50 text-slate-600">
+                                                    Art. {c.articulo}
+                                                </Badge>
+                                            </td>
+                                            <td className="p-3 text-right">{c.articulo === '99' ? '12 hs.' : '-'}</td>
+                                            <td className="p-3 text-right">
+                                                <span className="font-mono font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded">
+                                                    {c.total} {c.descr_tiempo}
+                                                </span>
+                                            </td>
+                                            <td className="p-3 text-right">-</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+
+
                     </div>
+                )}
+            </TabsContent>
 
-                </div>
-                <div className="space-y-4">
-                    <p>Art. 74: Cant. total según cantidad de horas - cantidad de horas consumidas</p>
-                    <p>Art. 1185 Generados (Tabla con los 1185 disponibles)</p>
-                    <p>Art. 99 (12 hs - cantidad de horas consumidas)</p>
-                </div>
-                <div className="space-y-6 pt-2">
-                    {catedras.length === 0 ? (
-                        <p className="text-xs text-slate-400 text-center py-8 border border-dashed rounded-lg bg-slate-50/50">
-                            El agente no registra materias dictadas en el ciclo actual.
-                        </p>
-                    ) : (
-                        // 1. Extraemos de forma única los nombres de los turnos presentes en tus datos (ej: "Mañana", "Tarde")
-                        Array.from(new Set(catedras.map(c => c.turno || 'Sin Especificar'))).map((nombreTurno) => {
-                            // 2. Filtramos las cátedras que corresponden estrictamente a este bloque de turno
-                            const catedrasDelTurno = catedras.filter(c => (c.turno || 'Sin Especificar') === nombreTurno);
-                            const datos = carga_horaria.find(e => e.turno === nombreTurno)
-                            // Disponible Art 74
-                            let disp74 = 0;
-                            if (datos.hs_act == null)
-                                disp74 = 0
-                            else if (datos.hs_act <= 6)
-                                disp74 = 3;
-                            else if (datos.hs_act <= 12)
-                                disp74 = 6;
-                            else if (datos.hs_act <= 18)
-                                disp74 = 9;
-                            else
-                                disp74 = 12;
 
-                            //const datos = carga_horaria.find(e => e. ===)
 
-                            return (
-                                <div key={nombreTurno} className="space-y-2 border border-slate-100 rounded-xl p-4 bg-slate-50/40">
-                                    {/* Subcabecera del Turno */}
-                                    <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                                        <span className="text-xs font-bold text-slate-700 tracking-wide uppercase flex items-center">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-slate-500 mr-2"></span>
-                                            Turno {nombreTurno}
-                                        </span>
-                                        <Badge variant="outline" className="font-bold text-[10px] bg-white text-slate-500 font-mono">
-                                            {datos.hs_act} horas cátedra.
-                                        </Badge>
 
-                                    </div>
-
-                                    {/* Tarjetas del Turno */}
-                                    <div className="space-y-2 pt-1">
-                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 rounded-xl border border-slate-100 bg-white shadow-3xs gap-3">
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-semibold text-slate-800 truncate">Artículo 99</p>
-                                                <p className="text-slate-600 font-bold">
-                                                    Habilitado por Dcto. 4118: <span className="text-xs text-slate-400 font-medium">12 horas reloj por año.</span>
-                                                </p>
-                                                <p className="text-slate-600 font-bold">
-                                                    Consumido: <span className="text-xs text-slate-400 font-medium">...</span>
-                                                </p>
-                                                <p className="text-slate-600 font-bold">
-                                                    Disponible: <span className="text-xs text-slate-400 font-medium">12 horas reloj por año.</span>
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 rounded-xl border border-slate-100 bg-white shadow-3xs gap-3">
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-semibold text-slate-800 truncate">Artículo 74</p>
-                                                <p className="text-slate-600 font-bold">
-                                                    Habilitado por Dcto. 4118: <span className="text-xs text-slate-400 font-medium">{disp74} horas cátedra.</span>
-                                                </p>
-                                                <p className="text-slate-600 font-bold">
-                                                    Consumido: <span className="text-xs text-slate-400 font-medium">...</span>
-                                                </p>
-                                                <p className="text-slate-600 font-bold">
-                                                    Disponible: <span className="text-xs text-slate-400 font-medium">{disp74} horas cátedra.</span>
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 rounded-xl border border-slate-100 bg-white shadow-3xs gap-3">
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-semibold text-slate-800 truncate">Dcto. 1185 Artículo 2</p>
-                                                <p className="text-slate-600 font-bold">
-                                                    Habilitado por Dcto. 4118: <span className="text-xs text-slate-400 font-medium">Disponible</span>
-                                                </p>
-                                                <p className="text-slate-600 font-bold">
-                                                    Consumido: <span className="text-xs text-slate-400 font-medium">...</span>
-                                                </p>
-                                                <p className="text-slate-600 font-bold">
-                                                    Disponible: <span className="text-xs text-slate-400 font-medium">{disp74} horas cátedra.</span>
-                                                </p>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })
-                    )}
-                </div>
-            </TabsContent >
         </Tabs >
     );
 }

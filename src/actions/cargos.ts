@@ -15,7 +15,7 @@ export async function getCargosPorDocente(id_docente: number) {
     const text = `
         SELECT 
             dc.id_docente_cargo, dc.id_cargo, dc.situacion_revista, dc.fch_toma_posesion, dc.fch_cese, dc.dcto_res,
-            dc.cant_hs, dc.genera_1185, dc.con_licencia, dc.descr_licencia,
+            dc.cant_hs, c.genera_1185, dc.con_licencia, dc.descr_licencia,
             c.nombre_cargo, t.nombre AS turno_nombre
         FROM docentes_cargos dc
         JOIN cargos c ON dc.id_cargo = c.id_cargo
@@ -36,10 +36,7 @@ export async function createCargoDocente(formData: FormData) {
     const fch_toma_posesion = formData.get('fch_toma_posesion') as string;
     const fch_cese = formData.get('fch_cese') as string || null;
     const dcto_res = formData.get('dcto_res') as string || null;
-
-    // Nuevos campos procesados
     const cant_hs = parseInt(formData.get('cant_hs') as string, 10) || 0;
-    const genera_1185 = formData.get('genera_1185') === 'true';
     const con_licencia = formData.get('con_licencia') === 'true';
     const descr_licencia = con_licencia ? (formData.get('descr_licencia') as string || null) : null;
 
@@ -47,10 +44,10 @@ export async function createCargoDocente(formData: FormData) {
         const sql = `
             INSERT INTO docentes_cargos (
                 id_docente, id_cargo, id_turno, situacion_revista, fch_toma_posesion, 
-                fch_cese, dcto_res, cant_hs, genera_1185, con_licencia, descr_licencia
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+                fch_cese, dcto_res, cant_hs, con_licencia, descr_licencia
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
         `;
-        await query(sql, [id_docente, id_cargo, id_turno, situacion_revista, fch_toma_posesion, fch_cese, dcto_res, cant_hs, genera_1185, con_licencia, descr_licencia]);
+        await query(sql, [id_docente, id_cargo, id_turno, situacion_revista, fch_toma_posesion, fch_cese, dcto_res, cant_hs, con_licencia, descr_licencia]);
 
         revalidatePath(`/dashboard/docentes/${id_docente}`);
         return { success: true, error: null };
@@ -82,9 +79,7 @@ export async function updateCargoDocente(id_docente_cargo: number, formData: For
     const fch_toma_posesion = formData.get('fch_toma_posesion') as string;
     const fch_cese = formData.get('fch_cese') as string || null;
     const dcto_res = formData.get('dcto_res') as string || null;
-
     const cant_hs = parseInt(formData.get('cant_hs') as string, 10) || 0;
-    const genera_1185 = formData.get('genera_1185') === 'true';
     const con_licencia = formData.get('con_licencia') === 'true';
     const descr_licencia = con_licencia ? (formData.get('descr_licencia') as string || null) : null;
 
@@ -92,15 +87,15 @@ export async function updateCargoDocente(id_docente_cargo: number, formData: For
         const sql = `
             UPDATE docentes_cargos 
             SET id_cargo = $1, id_turno = $2, situacion_revista = $3, fch_toma_posesion = $4, 
-                fch_cese = $5, dcto_res = $6, cant_hs = $7, genera_1185 = $8, 
-                con_licencia = $9, descr_licencia = $10
-            WHERE id_docente_cargo = $11
+                fch_cese = $5, dcto_res = $6, cant_hs = $7, 
+                con_licencia = $8, descr_licencia = $9
+            WHERE id_docente_cargo = $10
         `;
 
         await query(sql, [
             id_cargo, id_turno, situacion_revista, fch_toma_posesion,
-            fch_cese, dcto_res, cant_hs, genera_1185,
-            con_licencia, descr_licencia, id_docente_cargo
+            fch_cese, dcto_res, cant_hs, con_licencia,
+            descr_licencia, id_docente_cargo
         ]);
 
         revalidatePath(`/dashboard/docentes/${id_docente}`);

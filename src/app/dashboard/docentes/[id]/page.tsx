@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
-import { getDocentePorId, getDocenteCatedras, getLicenciasPorDocente, getCatalogosAsignacion, getCargaHorariaPorDocente } from '@/actions/docentes';
+import { getDocentePorId, getDocenteCatedras, getLicenciasPorDocente, getCatalogosAsignacion, getCargaHorariaPorDocente, getHorarioAgendaDocente } from '@/actions/docentes';
 import ExpedienteTabs from './ExpedienteTabs';
 import { getCargosPorDocente, getCatalogosCargos } from '@/actions/cargos';
+import { getConsumoLicenciasPorDocente } from '@/actions/auditoria_licencias';
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -23,6 +24,8 @@ export default async function ExpedienteDocentePage({ params }: PageProps) {
     const carga_horaria = await getCargaHorariaPorDocente(id_docente);
     const cargosLista = await getCargosPorDocente(id_docente);
     const catalogosCargos = await getCatalogosCargos();
+    const agendaHoraria = await getHorarioAgendaDocente(id_docente)
+    const consumoLicencias = await getConsumoLicenciasPorDocente(id_docente);
 
     return (
         <div className="space-y-6">
@@ -48,6 +51,8 @@ export default async function ExpedienteDocentePage({ params }: PageProps) {
                 carga_horaria={carga_horaria}
                 cargosIniciales={cargosLista}
                 catalogosCargos={catalogosCargos}
+                agendaHoraria={agendaHoraria}
+                consumoLicencias={consumoLicencias}
             />
         </div>
     );
