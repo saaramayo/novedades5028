@@ -30,7 +30,8 @@ export async function getNovedadesDelDia() {
 
         // 3. Métricas para los indicadores superiores
         const metAgentes = await query('SELECT COUNT(*) FROM docentes');
-        const metDocentes = await query("SELECT COUNT(*) FROM docentes WHERE cargo LIKE '%DOCENTE%'");
+        // id_cargo = 12 -- Docente horas cátedras
+        const metDocentes = await query("SELECT COUNT(id_docente) FROM docentes WHERE id_docente IN (SELECT id_docente FROM docentes_cargos WHERE con_licencia = false AND id_cargo = 12)");
         const metLicencias = await query(
             "SELECT COUNT(DISTINCT id_docente) FROM solicitudes_licencias WHERE estado = 'Aprobado' AND $1::date BETWEEN fecha_inicio AND fecha_fin",
             [hoy]

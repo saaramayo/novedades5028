@@ -71,10 +71,6 @@ export default function DocenteModalForm() {
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cargo</label>
-                                <input type="text" name="cargo" required className="w-full border p-2 rounded-lg text-sm bg-white focus:ring-2 focus:ring-slate-400 focus:outline-none" />
-                            </div>
-                            <div>
                                 <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Domicilio</label>
                                 <input type="text" name="domicilio" className="w-full border p-2 rounded-lg text-sm bg-white focus:ring-2 focus:ring-slate-400 focus:outline-none" />
                             </div>

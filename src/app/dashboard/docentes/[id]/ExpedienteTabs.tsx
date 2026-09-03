@@ -185,7 +185,7 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                         <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block print:text-slate-600">Cargo/Carga Horaria</span>
                         {carga_horaria.map((ch) => (
                             <Badge key={ch.nombre_cargo + ch.turno} variant="secondary" className="font-bold bg-slate-200/60 text-slate-800 rounded px-2.5 py-0.5 text-xs print:border print:border-slate-400 print:bg-white block">
-                                {ch.nombre_cargo} | {ch.turno}: {ch.hs_act ? ch.hs_act + ' horas.' : ''} {ch.hs_lic ? '(Lic.: ' + ch.hs_lic + ' horas.)' : ''}
+                                Turno {ch.turno}: {ch.hs_act ? + ch.hs_act + ' horas.' : ''} {ch.hs_lic > 0 ? ' C/lic.: ' + ch.hs_lic + ' horas.' : ''} ({ch.nombre_cargo})
                             </Badge>
                         ))}
                     </div>
@@ -267,8 +267,8 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                 <div className="pt-6 border-t border-slate-100 space-y-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h3 className="text-base font-bold text-slate-900 uppercase">Cargos de planta</h3>
-                            <p className="text-xs text-slate-400 font-medium">Designaciones administrativas y de planta técnica del agente.</p>
+                            <h3 className="text-base font-bold text-slate-900 uppercase">Cargos</h3>
+                            <p className="text-xs text-slate-400 font-medium">Designaciones docentes y de planta técnica del agente.</p>
                         </div>
 
                         {/* MODAL DE ALTA DE CARGOS */}
@@ -288,14 +288,14 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center space-x-2">
                                             <p className="text-sm font-bold text-slate-800 truncate">{item.nombre_cargo}</p>
-                                            <span className="text-xs font-mono font-bold text-slate-500">({item.cant_hs} hs)</span>
+                                            <span className="text-xs font-mono font-bold text-slate-500">{item.por_hs ? '' : '(' + item.cant_hs + ' hs.)'}</span>
 
                                             {/* Badge condicional Dec. 1185 */}
-                                            {item.genera_1185 && (
+                                            {/*item.genera_1185 && (
                                                 <Badge className="bg-purple-50 border border-purple-200 text-purple-700 text-[9px] font-bold rounded px-1.5 py-0.5">
                                                     ⚖ Dec. 1185
                                                 </Badge>
-                                            )}
+                                            )*/}
 
                                             {/* Badge condicional Licencia activa */}
                                             {item.con_licencia && (
@@ -342,7 +342,7 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
 
                 <div className="flex items-center justify-between">
                     <div>
-                        <h3 className="text-base font-bold text-slate-900 uppercase">Cargos docentes</h3>
+                        <h3 className="text-base font-bold text-slate-900 uppercase">Espacios Curriculares Asignados</h3>
                         <p className="text-xs text-slate-400 font-medium">Cursos y materias dictados por el docente.</p>
                     </div>
 
@@ -542,36 +542,34 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                         El agente no registra días de licencias usufructuados o aprobados en el sistema.
                     </p>
                 ) : (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                    <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 items-start">
 
                         {/* LADO IZQUIERDO: Tabla Analítica Adaptativa */}
                         <div className="bg-white rounded-xl border overflow-hidden text-sm">
                             <table className="w-full text-left border-collapse">
                                 <thead className="bg-slate-50/70 border-b">
                                     <tr>
-                                        <th className="p-3 font-semibold text-slate-600 text-xs uppercase">Turno</th>
+                                        <th className="p-3 font-semibold text-slate-600 text-xs uppercase">Turno/Cargo</th>
                                         <th className="p-3 font-semibold text-slate-600 text-xs uppercase">Artículo</th>
-                                        <th className="p-3 font-semibold text-slate-600 text-xs uppercase text-right">4118</th>
-                                        <th className="p-3 font-semibold text-slate-600 text-xs uppercase text-right">Tiempo</th>
+                                        <th className="p-3 font-semibold text-slate-600 text-xs uppercase text-right">Según 4118</th>
+                                        <th className="p-3 font-semibold text-slate-600 text-xs uppercase text-right">Consumo</th>
                                         <th className="p-3 font-semibold text-slate-600 text-xs uppercase text-right">Disponible</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100">
                                     {consumoLicencias.map((c: any, index: number) => (
                                         <tr key={index} className="hover:bg-slate-50/50 transition-colors">
-                                            <td className="p-3 font-medium text-slate-700 capitalize">{c.turno_nombre.toLowerCase()}</td>
+                                            <td className="p-3 font-medium text-slate-700 capitalize">{c.descr_cargo}</td>
                                             <td className="p-3">
                                                 <Badge variant="outline" className="font-mono font-bold bg-slate-50 text-slate-600">
                                                     Art. {c.articulo}
                                                 </Badge>
                                             </td>
-                                            <td className="p-3 text-right">{c.articulo === '99' ? '12 hs.' : '-'}</td>
+                                            <td className="p-3 text-right">{c.articulo === '99' ? c.hs99 : c.hs74}</td>
                                             <td className="p-3 text-right">
-                                                <span className="font-mono font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded">
-                                                    {c.total} {c.descr_tiempo}
-                                                </span>
+                                                {c.tiempo_art ? c.tiempo_art : '-'}
                                             </td>
-                                            <td className="p-3 text-right">-</td>
+                                            <td className="p-3 text-right">{(c.articulo === '99' ? (12 * 60 - parseInt(c.tiempo_art)) : parseInt(c.hs74) - parseInt(c.tiempo_art))}</td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -650,10 +648,6 @@ function DialogModalEdicion({ Docente, FormAction, IsPending, State }: any) {
                                     <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Apellido</label>
                                     <input type="text" name="apellido" defaultValue={Docente.apellido} required className="w-full border p-2 rounded-lg text-sm bg-white focus:ring-2 focus:ring-slate-400 focus:outline-none" />
                                 </div>
-                            </div>
-                            <div>
-                                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cargo</label>
-                                <input type="text" name="cargo" defaultValue={Docente.cargo} required className="w-full border p-2 rounded-lg text-sm bg-white focus:ring-2 focus:ring-slate-400 focus:outline-none" />
                             </div>
                             <div>
                                 <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Domicilio</label>

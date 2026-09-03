@@ -16,21 +16,50 @@ export async function getDocentesFiltradosYPaginados(paginaActual: number, searc
     if (searchTerm.trim() !== '') {
         const formattedSearch = `%${searchTerm.trim()}%`;
 
-        registrosQuery = `
+        /*registrosQuery = `
           SELECT * FROM docentes 
             WHERE apellido ILIKE $1 OR cuil ILIKE $1 OR cargo ILIKE $1 OR tipo_cargo ILIKE $1 
             ORDER BY apellido, nombre 
             LIMIT $2 OFFSET $3
+        `;*/
+
+        registrosQuery = `
+            SELECT d.*, STRING_AGG(DISTINCT c.nombre_cargo, ', ') AS cargo
+            FROM docentes d
+            JOIN docentes_cargos dc ON d.id_docente = dc.id_docente
+            JOIN cargos c ON dc.id_cargo = c.id_cargo
+            WHERE apellido ILIKE $1 OR cuil ILIKE $1 OR c.nombre_cargo ILIKE $1  
+            GROUP BY d.id_docente
+            ORDER BY apellido, nombre 
+            LIMIT $2 OFFSET $3
         `;
-        countQuery = `SELECT COUNT(*) FROM docentes WHERE apellido ILIKE $1 OR cuil ILIKE $1 OR cargo ILIKE $1`;
+
+        countQuery = `
+            SELECT COUNT(*) 
+            FROM docentes d
+            JOIN docentes_cargos dc ON d.id_docente = dc.id_docente
+            JOIN cargos c ON dc.id_cargo = c.id_cargo
+            WHERE apellido ILIKE $1 OR cuil ILIKE $1 OR c.nombre_cargo ILIKE $1
+        `;
         params = [formattedSearch];
     } else {
         // Consulta limpia si no hay búsqueda activa
-        registrosQuery = `
+        /*registrosQuery = `
           SELECT * FROM docentes 
             ORDER BY apellido, nombre 
             LIMIT $1 OFFSET $2
+        `;*/
+        registrosQuery = `
+            SELECT d.*, STRING_AGG(DISTINCT c.nombre_cargo, ', ') AS cargo
+            FROM docentes d
+            JOIN docentes_cargos dc ON d.id_docente = dc.id_docente
+            JOIN cargos c ON dc.id_cargo = c.id_cargo
+            GROUP BY d.id_docente
+            ORDER BY apellido, nombre 
+            LIMIT $1 OFFSET $2
         `;
+
+
         countQuery = `SELECT COUNT(*) FROM docentes`;
     }
 
@@ -52,7 +81,6 @@ export async function getDocentesFiltradosYPaginados(paginaActual: number, searc
 export async function createDocente(prevState: any, formData: FormData) {
     const cuil = formData.get('cuil') as string;
     const dni = formData.get('dni') as string;
-    const cargo = formData.get('cargo') as string;
     const nombre = formData.get('nombre') as string;
     const apellido = formData.get('apellido') as string;
     const domicilio = formData.get('domicilio') as string;
@@ -63,8 +91,8 @@ export async function createDocente(prevState: any, formData: FormData) {
 
     try {
         await query(
-            'INSERT INTO docentes (nombre, apellido, dni, cuil, cargo, domicilio, email, celular, contacto, celular_contacto) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)',
-            [nombre, apellido, dni, cuil, cargo, domicilio, email, celular, contacto, celular_contacto]
+            'INSERT INTO docentes (nombre, apellido, dni, cuil, domicilio, email, celular, contacto, celular_contacto) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)',
+            [nombre, apellido, dni, cuil, domicilio, email, celular, contacto, celular_contacto]
         );
 
         revalidatePath('/dashboard/docentes');
@@ -136,7 +164,6 @@ export async function getDocenteCatedras(id_docente: number) {
 export async function updateDocente(id_docente: number, formData: FormData) {
     const cuil = formData.get('cuil') as string;
     const dni = formData.get('dni') as string;
-    const cargo = formData.get('cargo') as string;
     const nombre = formData.get('nombre') as string;
     const apellido = formData.get('apellido') as string;
     const domicilio = formData.get('domicilio') as string;
@@ -149,11 +176,11 @@ export async function updateDocente(id_docente: number, formData: FormData) {
         const text = `
             UPDATE docentes 
             SET nombre = $1, apellido = $2, cuil = $3, dni = $4, 
-                cargo = $5, domicilio = $6, email = $7, celular = $8, 
-                contacto = $9, celular_contacto = $10 
-            WHERE id_docente = $11
+                domicilio = $5, email = $6, celular = $7, 
+                contacto = $8, celular_contacto = $9 
+            WHERE id_docente = $10
         `;
-        await query(text, [nombre, apellido, cuil, dni, cargo, domicilio,
+        await query(text, [nombre, apellido, cuil, dni, domicilio,
             email, celular, contacto, celular_contacto, id_docente]);
 
         revalidatePath('/dashboard/docentes');
@@ -250,6 +277,41 @@ export async function getLicenciasPorDocente(id_docente: number) {
 export async function getCargaHorariaPorDocente(id_docente: number) {
     const text = `
         SELECT 
+            d.id_docente,
+            t.id_turno,
+            c.nombre_cargo,
+            t.nombre AS turno,
+            CASE
+                WHEN (c.por_hs) THEN 
+                    (SELECT SUM(cant_hs) FROM asignaciones a
+                        JOIN divisiones di ON a.id_division = di.id_division
+                        WHERE id_docente = d.id_docente AND di.id_turno = t.id_turno)
+                ELSE CASE WHEN (dc.con_licencia) THEN 0 ELSE dc.cant_hs END
+            END AS cant_hs,
+            CASE
+            WHEN (c.por_hs) THEN 
+                (SELECT SUM(cant_hs) FROM asignaciones a
+                JOIN divisiones di ON a.id_division = di.id_division
+                WHERE con_licencia = false AND id_docente = d.id_docente AND di.id_turno = t.id_turno)
+            ELSE CASE WHEN (dc.con_licencia) THEN 0 ELSE dc.cant_hs END 
+            END AS hs_act, 
+            CASE
+            WHEN (c.por_hs) THEN 
+                (SELECT SUM(cant_hs) FROM asignaciones a
+                JOIN divisiones di ON a.id_division = di.id_division
+                WHERE con_licencia = true AND id_docente = d.id_docente AND di.id_turno = t.id_turno)
+            ELSE CASE WHEN (dc.con_licencia) THEN dc.cant_hs ELSE 0 END 
+            END AS hs_lic 
+        FROM docentes d JOIN docentes_cargos dc ON d.id_docente = dc.id_docente
+        JOIN cargos c ON dc.id_cargo = c.id_cargo
+        JOIN turnos t ON dc.id_turno = t.id_turno
+        WHERE d.id_docente = $1 
+        GROUP BY d.id_docente, t.id_turno, c.nombre_cargo, t.nombre, c.por_hs, dc.cant_hs, dc.con_licencia
+        ORDER BY t.id_turno
+    `;
+
+    /*const text = `
+        SELECT 
             c.nombre_cargo,
             t.nombre AS turno,
             sum(dc.cant_hs) AS cant_hs, 
@@ -271,7 +333,7 @@ export async function getCargaHorariaPorDocente(id_docente: number) {
         JOIN turnos t ON div.id_turno = t.id_turno 
         WHERE d.id_docente = $1 
         GROUP BY nombre_cargo, t.nombre
-    `;
+    `;*/
 
     /*const text = `
         SELECT 
@@ -296,7 +358,7 @@ export async function buscarSugerenciasAgentes(termino: string) {
         const text = `
             SELECT id_docente, nombre, apellido, dni, cuil 
             FROM docentes 
-            WHERE apellido ILIKE $1 OR dni ILIKE $1 OR nombre ILIKE $1
+            WHERE apellido ILIKE $1 OR cuil ILIKE $1 OR nombre ILIKE $1
             ORDER BY apellido, nombre
             LIMIT 5
         `;
