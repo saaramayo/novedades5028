@@ -69,17 +69,18 @@ export async function getConsumoLicenciasPorDocente(id_docente: number) {
                 dcd.id_docente, 
                 CONCAT('Turno ', dcd.turno, ': ', dcd.nombre_cargo, ' (', dcd.hs, ' hs.)') AS descr_cargo, 
                 nro AS articulo,
-                (SELECT concat(SUM(tiempo), ' ', sl.descr_tiempo)
+                (SELECT CONCAT(SUM(tiempo), ' ', sl.descr_tiempo)
                 FROM solicitudes_licencias sl JOIN tipos_licencias tl ON sl.id_tipo_licencia = tl.id_tipo_licencia
                 WHERE sl.id_docente = dcd.id_docente AND sl.id_turno = dcd.id_turno AND articulo = al.nro
+                    AND EXTRACT(YEAR FROM CURRENT_DATE) = EXTRACT(YEAR FROM sl.fecha_inicio)
                 GROUP BY sl.descr_tiempo) AS tiempo_art,
                 CASE WHEN dcd.por_hs THEN
-                CASE 
-                    WHEN dcd.hs BETWEEN 1 AND 6 THEN '3 Oblig.'
-                    WHEN dcd.hs <= 12 THEN '6 Oblig.'
-                    WHEN dcd.hs <= 18 THEN '9 Oblig.'
-                    ELSE '12 Oblig.'
-                END 
+                    CASE 
+                        WHEN dcd.hs BETWEEN 1 AND 6 THEN '3 Oblig.'
+                        WHEN dcd.hs <= 12 THEN '6 Oblig.'
+                        WHEN dcd.hs <= 18 THEN '9 Oblig.'
+                        ELSE '12 Oblig.'
+                    END 
                 ELSE '2 Días.'
                 END AS hs74,
                 '12 hs.' AS hs99
