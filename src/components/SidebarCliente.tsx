@@ -41,6 +41,7 @@ export default function SidebarCliente({ usuarioLogueado }: SidebarClienteProps)
         { href: '/dashboard', label: 'Inicio', icon: LayoutDashboard },
         { href: '/dashboard/docentes', label: 'Agentes', icon: Users },
         { href: '/dashboard/licencias', label: 'Licencias (4118)', icon: FileText },
+        { href: '/dashboard/licencias/decreto-1185', label: 'Licencias 1185', icon: FileText },
         { href: '/dashboard/grilla', label: 'Grilla Horaria', icon: Grid3X3 },
         { href: '/dashboard/calendario', label: 'Calendario Mensual', icon: Calendar },
     ];
