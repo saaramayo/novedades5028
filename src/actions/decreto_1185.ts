@@ -58,7 +58,7 @@ export async function getDocentesBeneficiarios1185(anio: number, mes: number, id
             JOIN cargos c ON dc.id_cargo = c.id_cargo
             WHERE c.genera_1185 = true AND dc.con_licencia = false 
                 AND dc.id_turno = ${id_turno} 
-                AND EXTRACT(MONTH FROM dc.fch_toma_posesion) < ${mes}
+                AND dc.fch_toma_posesion <= '${primerDiaMes}' 
             ORDER BY docente_nombre
         )
         SELECT d1185.id_docente, d1185.dni, d1185.cuil, d1185.docente_nombre
@@ -66,12 +66,11 @@ export async function getDocentesBeneficiarios1185(anio: number, mes: number, id
         WHERE NOT id_docente IN (SELECT id_docente FROM 
             solicitudes_licencias sl JOIN
             tipos_licencias tl ON sl.id_tipo_licencia = tl.id_tipo_licencia
-            WHERE tl.articulo <> '75' AND tl.articulo <> '2 (1185/98)' 
+            WHERE tl.articulo NOT IN ('75', '1185', 'Art. 75', 'Art. 1185') 
                 AND EXTRACT(YEAR FROM CURRENT_DATE) = EXTRACT(YEAR FROM sl.fecha_inicio)
                 AND EXTRACT(MONTH FROM sl.fecha_inicio) = ${mes}
                 AND id_turno = ${id_turno})
         `;
-
 
 
         //const res = await query(text, params);

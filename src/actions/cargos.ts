@@ -16,7 +16,7 @@ export async function getCargosPorDocente(id_docente: number) {
         SELECT 
             dc.id_docente_cargo, dc.id_cargo, dc.situacion_revista, dc.fch_toma_posesion, dc.fch_cese, dc.dcto_res,
             dc.cant_hs, c.genera_1185, dc.con_licencia, dc.descr_licencia,
-            c.nombre_cargo, t.nombre AS turno_nombre, c.por_hs
+            c.nombre_cargo, t.nombre AS turno_nombre, c.por_hs, t.id_turno
         FROM docentes_cargos dc
         JOIN cargos c ON dc.id_cargo = c.id_cargo
         JOIN turnos t ON dc.id_turno = t.id_turno

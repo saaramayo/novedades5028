@@ -315,7 +315,7 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                                         <p className="text-xs font-mono font-semibold text-slate-700 truncate">{item.dcto_res || '-'}</p>
                                     </div>
                                     <div className="flex items-center justify-between sm:justify-end space-x-3 shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0">
-                                        <Badge variant="outline" className="font-mono text-[10px] text-slate-600 bg-slate-50 font-bold px-2 py-0.5 rounded">{item.situacion_revista}</Badge>
+                                        <Badge variant="outline" className="font-mono text-[10px] text-slate-600 bg-slate-50 font-bold px-2 py-0.5 rounded">{item.situacion_revista || '-'}</Badge>
 
                                         {/* NUEVO MODAL DE EDICIÓN PROPIO PARA CARGOS */}
                                         <EditarCargoModal

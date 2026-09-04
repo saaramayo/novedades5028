@@ -63,6 +63,7 @@ export default function EditarCargoModal({ idDocente, item, catalogos, onSuccess
                                 <div className="col-span-2">
                                     <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Régimen Revista</label>
                                     <select name="situacion_revista" defaultValue={item.situacion_revista} className="w-full border p-2 rounded-lg text-sm bg-white">
+                                        <option value="">Seleccione...</option>
                                         <option value="Titular">Titular</option>
                                         <option value="Interino">Interino</option>
                                         <option value="Suplente">Suplente</option>

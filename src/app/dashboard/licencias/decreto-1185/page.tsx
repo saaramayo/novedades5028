@@ -22,8 +22,7 @@ export default async function PaginaDecreto1185({ searchParams }: PageProps) {
     // Consultar catálogos para los filtros
     const turnosCatalog = await query('SELECT id_turno, nombre FROM turnos ORDER BY id_turno ASC');
     const { beneficiarios, error } = await getDocentesBeneficiarios1185(anioActual, mesActual, idTurnoActual);
-    console.log(beneficiarios);
-
+    
     // Server Action inline para redireccionar mutando los parámetros URL de Next.js
     const handleFiltrar = async (formData: FormData) => {
         'use server';
