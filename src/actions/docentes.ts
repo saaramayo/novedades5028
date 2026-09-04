@@ -26,8 +26,8 @@ export async function getDocentesFiltradosYPaginados(paginaActual: number, searc
         registrosQuery = `
             SELECT d.*, STRING_AGG(DISTINCT c.nombre_cargo, ', ') AS cargo
             FROM docentes d
-            JOIN docentes_cargos dc ON d.id_docente = dc.id_docente
-            JOIN cargos c ON dc.id_cargo = c.id_cargo
+            LEFT JOIN docentes_cargos dc ON d.id_docente = dc.id_docente
+            LEFT JOIN cargos c ON dc.id_cargo = c.id_cargo
             WHERE apellido ILIKE $1 OR cuil ILIKE $1 OR c.nombre_cargo ILIKE $1  
             GROUP BY d.id_docente
             ORDER BY apellido, nombre 
