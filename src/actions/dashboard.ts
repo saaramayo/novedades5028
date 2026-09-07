@@ -17,8 +17,10 @@ export async function getNovedadesDelDia() {
                 s.id_turno,
                 CONCAT(d.apellido, ' ', d.nombre) AS docente_nombre,
                 d.cuil,
-                tl.articulo
-                FROM solicitudes_licencias s
+                tl.articulo,
+                s.fecha_inicio,
+                s.fecha_fin
+            FROM solicitudes_licencias s
             JOIN docentes d ON s.id_docente = d.id_docente
             JOIN tipos_licencias tl ON s.id_tipo_licencia = tl.id_tipo_licencia
             WHERE s.estado = 'Aprobado'
