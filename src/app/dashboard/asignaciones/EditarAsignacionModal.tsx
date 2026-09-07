@@ -32,7 +32,7 @@ export default function EditarAsignacionModal({ asignacion, catalogos }: EditarP
                 </button>
             </DialogTrigger>
 
-            <DialogContent className="w-[95%] sm:max-w-[700px] bg-white rounded-xl gap-0 p-0 overflow-hidden">
+            <DialogContent className="w-[95%] sm:max-w-[600px] bg-white rounded-xl gap-0 p-0 overflow-hidden">
                 <DialogHeader className="p-6 border-b border-slate-100 bg-white shrink-0">
                     <DialogTitle className="text-lg font-bold text-slate-900">Modificar Materia</DialogTitle>
                     <DialogDescription className="text-xs text-slate-500">Corrija las especificaciones normativas de la designación.</DialogDescription>
@@ -51,14 +51,14 @@ export default function EditarAsignacionModal({ asignacion, catalogos }: EditarP
                             </div>
 
 
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-1">
-                                <div className="col-span-2">
+                            <div className="grid grid-cols-1 sm:grid-cols-4 gap-1">
+                                <div className="col-span-3">
                                     <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Materia/Cargo</label>
                                     <select name="id_materia" defaultValue={asignacion.id_materia} required className="w-full border p-2 rounded-lg text-sm bg-white">
                                         {catalogos.materias.map(m => <option key={m.id_materia} value={m.id_materia}>{m.nombre}</option>)}
                                     </select>
                                 </div>
-                                <div>
+                                <div className="col-span-1">
                                     <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cant. Hs</label>
                                     <input type="number" name="cant_hs" defaultValue={asignacion.cant_hs} min={1} required className="w-full border p-2 rounded-lg text-sm" />
                                 </div>
@@ -94,8 +94,8 @@ export default function EditarAsignacionModal({ asignacion, catalogos }: EditarP
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-3 gap-1">
-                                <div className="col-span-2">
+                            <div className="grid grid-cols-4 gap-1">
+                                <div className="col-span-3">
                                     <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Instrumento Legal/Res.</label>
                                     <input type="text" name="dcto_res" defaultValue={asignacion.dcto_res || ''} className="w-full border p-2 rounded-lg text-sm" />
                                 </div>

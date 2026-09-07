@@ -203,15 +203,19 @@ export async function asignarMateriaDocente(id_docente: number, formData: FormDa
     const fch_cese = (formData.get('fch_cese') != '') ? formData.get('fch_cese') : null;
     const anio_lectivo = formData.get('anio_lectivo');
     const dcto_res = formData.get('dcto_res');
+    const con_licencia = formData.get('con_licencia') === 'true';
+    const descr_licencia = con_licencia ? (formData.get('descr_licencia') as string || null) : null;
+    const baja = formData.get('baja') === 'true';
+    const motivo_baja = baja ? (formData.get('motivo_baja') as string || null) : null;
 
 
     try {
         const text = `
             INSERT INTO asignaciones (id_docente, id_division, id_materia, 
-                cant_hs, situacion_revista, fch_toma_posesion, fch_cese, anio_lectivo, dcto_res)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                cant_hs, situacion_revista, fch_toma_posesion, fch_cese, anio_lectivo, dcto_res, con_licencia, descr_licencia, baja, motivo_baja)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
         `;
-        await query(text, [id_docente, id_division, id_materia, cant_hs, situacion_revista, fch_toma_posesion, fch_cese, anio_lectivo, dcto_res]);
+        await query(text, [id_docente, id_division, id_materia, cant_hs, situacion_revista, fch_toma_posesion, fch_cese, anio_lectivo, dcto_res, con_licencia, descr_licencia, baja, motivo_baja]);
         revalidatePath('/dashboard/docentes');
         return { success: true, error: null };
     } catch (error) {

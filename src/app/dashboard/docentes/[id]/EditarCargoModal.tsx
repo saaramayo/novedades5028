@@ -59,8 +59,32 @@ export default function EditarCargoModal({ idDocente, item, catalogos, onSuccess
                                 </select>
                             </div>
 
-                            <div className="grid grid-cols-3 gap-2">
-                                <div className="col-span-2">
+                            <div className="grid grid-cols-2 gap-1">
+                                <div>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Turno</label>
+                                    <select name="id_turno" defaultValue={item.id_turno} required className="w-full border p-2 rounded-lg text-sm bg-white">
+                                        {catalogos.turnos.map((t: any) => <option key={t.id_turno} value={t.id_turno}>{t.nombre}</option>)}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Instrumento Res.</label>
+                                    <input type="text" name="dcto_res" defaultValue={item.dcto_res || ''} placeholder="Res 512/26" className="w-full border p-2 rounded-lg text-sm" />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-1">
+                                <div>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Toma Posesión</label>
+                                    <input type="date" name="fch_toma_posesion" defaultValue={limpiarFecha(item.fch_toma_posesion)} required className="w-full border p-2 rounded-lg text-xs" />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Fecha Cese</label>
+                                    <input type="date" name="fch_cese" defaultValue={item.fch_cese ? limpiarFecha(item.fch_cese) : ''} className="w-full border p-2 rounded-lg text-xs" />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-4 gap-1">
+                                <div className="col-span-3">
                                     <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Régimen Revista</label>
                                     <select name="situacion_revista" defaultValue={item.situacion_revista} className="w-full border p-2 rounded-lg text-sm bg-white">
                                         <option value="">Seleccione...</option>
@@ -75,29 +99,6 @@ export default function EditarCargoModal({ idDocente, item, catalogos, onSuccess
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Turno</label>
-                                    <select name="id_turno" defaultValue={item.id_turno} required className="w-full border p-2 rounded-lg text-sm bg-white">
-                                        {catalogos.turnos.map((t: any) => <option key={t.id_turno} value={t.id_turno}>{t.nombre}</option>)}
-                                    </select>
-                                </div>
-                                <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Instrumento Res.</label>
-                                    <input type="text" name="dcto_res" defaultValue={item.dcto_res || ''} placeholder="Res 512/26" className="w-full border p-2 rounded-lg text-sm" />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Toma Posesión</label>
-                                    <input type="date" name="fch_toma_posesion" defaultValue={limpiarFecha(item.fch_toma_posesion)} required className="w-full border p-2 rounded-lg text-xs" />
-                                </div>
-                                <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Fecha Cese</label>
-                                    <input type="date" name="fch_cese" defaultValue={item.fch_cese ? limpiarFecha(item.fch_cese) : ''} className="w-full border p-2 rounded-lg text-xs" />
-                                </div>
-                            </div>
 
                             <div className="pt-3 border-t border-slate-100 space-y-3">
                                 {/* Checkbox Incompatibilidad */}

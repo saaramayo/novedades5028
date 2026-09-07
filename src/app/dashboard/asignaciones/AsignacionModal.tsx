@@ -22,7 +22,7 @@ export default function AsignacionModal({ catalogos }: { catalogos: any }) {
                     <Plus className="w-4 h-4 mr-2" /> Nueva Asignación
                 </button>
             </DialogTrigger>
-            <DialogContent className="w-[95%] sm:max-w-[700px] bg-white rounded-xl gap-0 p-0 overflow-hidden">
+            <DialogContent className="w-[95%] sm:max-w-[600px] bg-white rounded-xl gap-0 p-0 overflow-hidden">
                 <DialogHeader className="p-6 border-b border-slate-100 bg-white shrink-0">
                     <DialogTitle className="text-lg font-bold text-slate-900 flex items-center">
                         <BookOpen className="w-5 h-5 mr-2 text-slate-500" /> Vincular Materia
@@ -43,15 +43,15 @@ export default function AsignacionModal({ catalogos }: { catalogos: any }) {
                                 </select>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-1">
-                                <div className="col-span-2">
+                            <div className="grid grid-cols-1 sm:grid-cols-4 gap-1">
+                                <div className="col-span-3">
                                     <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Materia/Cargo</label>
                                     <select name="id_materia" required className="w-full border p-2 rounded-lg text-sm bg-white">
                                         <option value="">Seleccione Materia...</option>
                                         {catalogos.materias.map((m: any) => <option key={m.id_materia} value={m.id_materia}>{m.nombre}</option>)}
                                     </select>
                                 </div>
-                                <div>
+                                <div className="col-span-1">
                                     <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cant. Hs</label>
                                     <input type="number" name="cant_hs" min={1} required className="w-full border p-2 rounded-lg text-sm" />
                                 </div>
@@ -87,12 +87,12 @@ export default function AsignacionModal({ catalogos }: { catalogos: any }) {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-1">
-                                <div className="col-span-2">
+                            <div className="grid grid-cols-1 sm:grid-cols-4 gap-1">
+                                <div className="col-span-3">
                                     <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Instrumento Legal/Res.</label>
                                     <input type="text" name="dcto_res" placeholder="Ej: Res. N° 4512/26" className="w-full border p-2 rounded-lg text-sm" />
                                 </div>
-                                <div>
+                                <div className="col-span-1">
                                     <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Ciclo</label>
                                     <input type="number" name="anio_lectivo" defaultValue={new Date().getFullYear()} required className="w-full border p-2 rounded-lg text-sm" />
                                 </div>

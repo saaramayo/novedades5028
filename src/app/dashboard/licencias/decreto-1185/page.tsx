@@ -33,9 +33,9 @@ export default async function PaginaDecreto1185({ searchParams }: PageProps) {
     };
 
     const mesesAnio = [
-        { v: 1, n: 'Enero' }, { v: 2, n: 'Febrero' }, { v: 3, n: 'Marzo' }, { v: 4, n: 'Abril' },
+        { v: 3, n: 'Marzo' }, { v: 4, n: 'Abril' },
         { v: 5, n: 'Mayo' }, { v: 6, n: 'Junio' }, { v: 7, n: 'Julio' }, { v: 8, n: 'Agosto' },
-        { v: 9, n: 'Septiembre' }, { v: 10, n: 'Octubre' }, { v: 11, n: 'Noviembre' }, { v: 12, n: 'Diciembre' }
+        { v: 9, n: 'Septiembre' }, { v: 10, n: 'Octubre' }, { v: 11, n: 'Noviembre' }
     ];
 
     return (
@@ -121,8 +121,8 @@ export default async function PaginaDecreto1185({ searchParams }: PageProps) {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Agente Beneficiario</TableHead>
-                                <TableHead>Documento Único (DNI)</TableHead>
+                                <TableHead>Agente</TableHead>
+                                <TableHead>DNI</TableHead>
                                 <TableHead>CUIL</TableHead>
                                 <TableHead>Contacto</TableHead>
                                 <TableHead className="text-center">Crédito Estímulo</TableHead>

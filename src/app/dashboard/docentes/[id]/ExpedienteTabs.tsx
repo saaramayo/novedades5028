@@ -22,8 +22,6 @@ import AsignarCargoModal from './AsignarCargoModal';
 import { deleteCargoDocente, getCargosPorDocente } from '@/actions/cargos';
 import EditarCargoModal from './EditarCargoModal';
 import AgendaHorariaDocente from './AgendaHorariaDocente';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-
 
 
 
