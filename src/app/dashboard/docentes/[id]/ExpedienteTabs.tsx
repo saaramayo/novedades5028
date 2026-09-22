@@ -489,7 +489,12 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                                                         </div>
                                                     </div>
                                                     <p className="text-sm font-semibold text-slate-800">{l.denominacion}</p>
-                                                    <p className="text-xs text-slate-400 font-medium">Fecha: {new Date(l.fecha_inicio).toLocaleDateString('es-AR')} al {new Date(l.fecha_fin).toLocaleDateString('es-AR')}</p>
+                                                    <p className="text-xs text-slate-400 font-medium">
+                                                        Fecha: {new Date(l.fecha_inicio).toLocaleDateString('es-AR', {
+                                                            timeZone: 'America/Argentina/Buenos_Aires'
+                                                        })} al {new Date(l.fecha_fin).toLocaleDateString('es-AR', {
+                                                            timeZone: 'America/Argentina/Buenos_Aires'
+                                                        })}</p>
                                                     <p className="text-xs text-slate-400 font-medium">{l.tiempo} {l.descr_tiempo}</p>
                                                 </div>
                                             ))}
@@ -513,7 +518,12 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                                                         <tr key={l.id_solicitud} className="border-b last:border-b-0 hover:bg-slate-50/50 transition-colors">
                                                             <td className="p-3"><Badge variant="outline" className="font-mono font-bold">{l.articulo}</Badge></td>
                                                             <td className="p-3 font-semibold text-slate-800">{l.denominacion}</td>
-                                                            <td className="p-3 text-slate-600 text-xs">{new Date(l.fecha_inicio).toLocaleDateString('es-AR')} al {new Date(l.fecha_fin).toLocaleDateString('es-AR')}</td>
+                                                            <td className="p-3 text-slate-600 text-xs">
+                                                                {new Date(l.fecha_inicio).toLocaleDateString('es-AR', {
+                                                                    timeZone: 'America/Argentina/Buenos_Aires'
+                                                                })} al {new Date(l.fecha_fin).toLocaleDateString('es-AR', {
+                                                                    timeZone: 'America/Argentina/Buenos_Aires'
+                                                                })}</td>
                                                             <td className="p-3 text-slate-600 text-xs">{l.tiempo} {l.descr_tiempo}</td>
                                                             <td className="p-3"><Badge className="text-[10px] font-bold rounded">{l.estado}</Badge></td>
                                                             <td className="p-3 text-right">
