@@ -19,7 +19,9 @@ export async function getNovedadesDelDia() {
                 d.cuil,
                 tl.articulo,
                 s.fecha_inicio,
-                s.fecha_fin
+                s.fecha_fin,
+                s.tiempo,
+                s.descr_tiempo
             FROM solicitudes_licencias s
             JOIN docentes d ON s.id_docente = d.id_docente
             JOIN tipos_licencias tl ON s.id_tipo_licencia = tl.id_tipo_licencia

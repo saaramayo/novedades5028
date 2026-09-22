@@ -59,7 +59,7 @@ export async function createCargoDocente(formData: FormData) {
 // 4. Procesar baja lógica del cargo
 export async function deleteCargoDocente(id_docente_cargo: number, id_docente: number) {
     try {
-        await query("UPDATE docentes_cargos SET baja = TRUE, motivo_baja = 'Baja de Planta' WHERE id_docente_cargo = $1", [id_docente_cargo]);
+        await query("UPDATE docentes_cargos SET baja = TRUE, motivo_baja = 'Baja de Planta (Jubilación, Renuncia o Desplazamiento o Traslado)' WHERE id_docente_cargo = $1", [id_docente_cargo]);
         revalidatePath(`/dashboard/docentes/${id_docente}`);
         return { success: true };
     } catch (error) {
@@ -75,21 +75,21 @@ export async function updateCargoDocente(id_docente_cargo: number, formData: For
     const id_docente = parseInt(formData.get('id_docente') as string, 10);
     const id_cargo = parseInt(formData.get('id_cargo') as string, 10);
     const id_turno = parseInt(formData.get('id_turno') as string, 10);
-    const situacion_revista = formData.get('situacion_revista') as string;
+    const situacion_revista = formData.get('situacion_revista') as string || null;
     const fch_toma_posesion = formData.get('fch_toma_posesion') as string;
     const fch_cese = formData.get('fch_cese') as string || null;
     const dcto_res = formData.get('dcto_res') as string || null;
     const cant_hs = parseInt(formData.get('cant_hs') as string, 10) || 0;
     const con_licencia = formData.get('con_licencia') === 'true';
     const descr_licencia = con_licencia ? (formData.get('descr_licencia') as string || null) : null;
-
+    
     try {
         const sql = `
             UPDATE docentes_cargos 
             SET id_cargo = $1, id_turno = $2, situacion_revista = $3, fch_toma_posesion = $4, 
                 fch_cese = $5, dcto_res = $6, cant_hs = $7, 
                 con_licencia = $8, descr_licencia = $9
-            WHERE id_docente_cargo = $10
+            WHERE id_docente_cargo = $12
         `;
 
         await query(sql, [

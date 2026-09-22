@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState } from 'react';
 import { updateCargoDocente } from '@/actions/cargos';
-import { Pencil, Briefcase, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { Pencil, Briefcase, AlertTriangle, ShieldCheck, UserMinus } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 interface EditarCargoProps {
@@ -42,7 +42,7 @@ export default function EditarCargoModal({ idDocente, item, catalogos, onSuccess
             <DialogContent className="w-[95%] sm:max-w-[600px] bg-white rounded-xl gap-0 p-0 overflow-hidden border">
                 <DialogHeader className="p-6 border-b border-slate-100 bg-white shrink-0">
                     <DialogTitle className="text-base font-bold text-slate-900 flex items-center">
-                        <Briefcase className="w-4 h-4 mr-2 text-slate-500" /> Corregir Cargo Asignado
+                        <Briefcase className="w-4 h-4 mr-2 text-slate-500" /> Editar Cargo Asignado
                     </DialogTitle>
                     <DialogDescription className="text-xs text-slate-500">Modifique los parámetros normativos o asiente novedades sobre el cargo.</DialogDescription>
                 </DialogHeader>
@@ -85,7 +85,7 @@ export default function EditarCargoModal({ idDocente, item, catalogos, onSuccess
 
                             <div className="grid grid-cols-4 gap-1">
                                 <div className="col-span-3">
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Régimen Revista</label>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Situación de Revista</label>
                                     <select name="situacion_revista" defaultValue={item.situacion_revista} className="w-full border p-2 rounded-lg text-sm bg-white">
                                         <option value="">Seleccione...</option>
                                         <option value="Titular">Titular</option>
@@ -132,17 +132,23 @@ export default function EditarCargoModal({ idDocente, item, catalogos, onSuccess
                                             <AlertTriangle className="w-3.5 h-3.5 text-amber-500 mr-1" /> ¿Este cargo se encuentra en Licencia?
                                         </label>
                                     </div>
-                                    {licenciaActiva && (
+                                    {/*licenciaActiva && (
                                         <input type="text" name="descr_licencia" defaultValue={item.descr_licencia || ''} required={licenciaActiva} placeholder="Ej: Art. 25 Carpeta Médica" className="w-full border border-amber-200 p-2 rounded-lg text-xs bg-amber-50/10" />
+                                    )*/}
+                                    {licenciaActiva && (
+                                        <div className="mt-2">
+                                            <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Motivo/Descripción de la Licencia</label>
+                                            <textarea name="descr_licencia" defaultValue={item.descr_licencia || ''} rows={3} required={licenciaActiva} placeholder="Detalles..." className="w-full border p-1.5 border-amber-200 bg-amber-50/20 rounded-lg text-xs resize-none focus:outline-none" />
+                                        </div>
                                     )}
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end space-x-2 shrink-0">
-                        <button type="button" onClick={() => setOpen(false)} className="px-4 py-2 border text-slate-700 text-xs font-semibold rounded-lg bg-white">Cancelar</button>
-                        <button type="submit" disabled={isPending} className="px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700">{isPending ? 'Guardando...' : 'Guardar Cambios'}</button>
+                        <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end space-x-2 shrink-0">
+                            <button type="button" onClick={() => setOpen(false)} className="px-4 py-2 border text-slate-700 text-xs font-semibold rounded-lg bg-white">Cancelar</button>
+                            <button type="submit" disabled={isPending} className="px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700">{isPending ? 'Guardando...' : 'Guardar Cambios'}</button>
+                        </div>
                     </div>
                 </form>
             </DialogContent>

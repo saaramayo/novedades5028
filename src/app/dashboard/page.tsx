@@ -82,6 +82,7 @@ export default async function DashboardPage() {
                                                 <TableRow>
                                                     <TableHead className="w-[120px]">CUIL</TableHead>
                                                     <TableHead>Agente/Docente</TableHead>
+                                                    <TableHead>Tiempo</TableHead>
                                                     <TableHead className="text-right">Artículo Decreto 4118</TableHead>
                                                 </TableRow>
                                             </TableHeader>
@@ -91,8 +92,9 @@ export default async function DashboardPage() {
                                                         <TableCell className="font-mono text-xs font-bold text-slate-500">{lic.cuil}</TableCell>
                                                         <TableCell className="font-semibold text-slate-900 flex items-center space-x-2 py-3">
                                                             <UserX className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                                            <span>{lic.docente_nombre} ({new Date(lic.fecha_inicio).toLocaleDateString()} a {new Date(lic.fecha_fin).toLocaleDateString()})</span>
+                                                            <span>{lic.docente_nombre} ({new Date(lic.fecha_inicio).toLocaleDateString('es-AR')} a {new Date(lic.fecha_fin).toLocaleDateString('es-AR')})</span>
                                                         </TableCell>
+                                                        <TableCell className="font-mono text-xs font-bold text-slate-500">{lic.tiempo} {lic.descr_tiempo}</TableCell>
                                                         <TableCell className="text-right">
                                                             <Badge className="bg-red-50 border border-red-200 text-red-700 text-[10px] font-bold tracking-wide">
                                                                 Art. {lic.articulo}

@@ -301,6 +301,12 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                                                     ⚠️ Licencia Activa
                                                 </Badge>
                                             )}
+                                            {item.baja && (
+                                                <Badge className="bg-red-50 border border-red-200 text-red-700 text-[9px] font-bold rounded px-1.5 py-0.5" title={item.motivo_baja}>
+                                                    ⚠️ BAJA
+                                                </Badge>
+                                            )}
+
                                         </div>
                                         <p className="text-xs text-slate-400 font-medium">Turno: <span className="text-slate-600 font-bold">{item.turno_nombre}</span></p>
                                     </div>
