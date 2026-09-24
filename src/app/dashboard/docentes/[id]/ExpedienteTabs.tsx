@@ -102,6 +102,12 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
         });
     };
 
+    const formatoFecha = (fch) => {
+        return fch.toLocaleDateString('es-AR', {
+            timeZone: 'America/Argentina/Buenos_Aires'
+        })
+    }
+
     return (
         <Tabs defaultValue="personales" className="w-full space-y-6">
             {/* Barra de Pestañas Adaptativa: Altura automática para evitar superposiciones */}
@@ -515,8 +521,7 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
                                                             <td className="p-3"><Badge variant="outline" className="font-mono font-bold">{l.articulo}</Badge></td>
                                                             <td className="p-3 font-semibold text-slate-800">{l.denominacion}</td>
                                                             <td className="p-3 text-slate-600 text-xs">
-                                                                {new Date(l.fecha_inicio).toLocaleDateString('es-AR')} al 
-                                                                {new Date(l.fecha_fin).toLocaleDateString('es-AR')}
+                                                                {formatoFecha(l.fecha_inicio)} al {new Date(l.fecha_fin).toLocaleDateString('es-AR')}
                                                             </td>
                                                             <td className="p-3 text-slate-600 text-xs">{l.tiempo} {l.descr_tiempo}</td>
                                                             <td className="p-3"><Badge className="text-[10px] font-bold rounded">{l.estado}</Badge></td>
