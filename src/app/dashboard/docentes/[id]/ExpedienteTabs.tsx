@@ -102,7 +102,7 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
         });
     };
 
-    const formatoFecha = (fch) => {
+    const formatoFecha = (fch: Date) => {
         return fch.toLocaleDateString('es-AR', {
             timeZone: 'America/Argentina/Buenos_Aires'
         })
