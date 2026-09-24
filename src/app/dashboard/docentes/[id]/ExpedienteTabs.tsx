@@ -103,9 +103,14 @@ export default function ExpedienteTabs({ docente, catedrasIniciales, licencias, 
     };
 
     const formatoFecha = (fch: Date) => {
-        return fch.toLocaleDateString('es-AR', {
-            timeZone: 'America/Argentina/Buenos_Aires'
-        })
+        const dia = fch.getUTCDate();
+        const mes = fch.getUTCMonth() + 1; // Los meses en JS van de 0 a 11
+        const anio = fch.getUTCFullYear();
+
+        // Lo armás en formato argentino (DD/MM/AAAA)
+        const fechaFinal = `${dia}/${mes}/${anio}`;
+        return fechaFinal;
+
     }
 
     return (
