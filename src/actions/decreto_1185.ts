@@ -6,9 +6,10 @@ import { revalidatePath } from 'next/cache';
 export async function getDocentesBeneficiarios1185(anio: number, mes: number, id_turno: number) {
     try {
         const primerDiaMes = `${anio}-${String(mes).padStart(2, '0')}-01`;
-        const ultimoDiaMes = `(${primerDiaMes}::date + interval '1 month' - interval '1 day')::date`;
+        //const ultimoDiaMes = `(${primerDiaMes}::date + interval '1 month' - interval '1 day')::date`;
 
         // Filtro obligatorio de turno para las cátedras/cargos activos
+        /*
         let filtroTurnoCatedra = '';
         const params: any[] = [primerDiaMes, ultimoDiaMes];
 
@@ -21,6 +22,7 @@ export async function getDocentesBeneficiarios1185(anio: number, mes: number, id
 
             params.push(id_turno);
         }
+        */
 
         /*const text = `
             SELECT DISTINCT 

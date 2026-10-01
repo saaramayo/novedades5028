@@ -33,9 +33,21 @@ export default function SidebarCliente({ usuarioLogueado }: SidebarClienteProps)
         '/dashboard/usuarios'
     ];
 
+    const rutasInformes = [
+        '/dashboard/informes/novedadesMensual',
+        '/dashboard/informes/docentesPorCurso',
+        '/dashboard/informes/docentes',
+        '/dashboard/informes/planta'
+    ];
+
     const [configAbierto, setConfigAbierto] = useState(
         rutasConfiguracion.some(ruta => pathname?.startsWith(ruta))
     );
+
+    const [infoAbierto, setInfoAbierto] = useState(
+        rutasInformes.some(ruta => pathname?.startsWith(ruta))
+    );
+
 
     const enlaces = [
         { href: '/dashboard', label: 'Inicio', icon: LayoutDashboard },
@@ -55,6 +67,15 @@ export default function SidebarCliente({ usuarioLogueado }: SidebarClienteProps)
         { href: '/dashboard/tipos-licencias', label: 'Config. Artículos 4118', icon: Settings },
         ...(mostrarUsuarios ? [{ href: '/dashboard/usuarios', label: 'Gestión de Usuarios', icon: Shield }] : []),
     ];
+
+    const submenuInformes = [
+        { href: '/dashboard/informes/novedadesMensual', label: 'Novedades Mensuales', icon: BookMarked },
+        { href: '/dashboard/informes/docentesPorCurso', label: 'Docentes Por Curso', icon: CalendarRange },
+        { href: '/dashboard/informes/docentes', label: 'Docentes', icon: Settings },
+        { href: '/dashboard/informes/planta', label: 'Personal de Planta', icon: Settings },
+
+    ];
+
 
     return (
         <aside className="hidden md:flex w-64 bg-white border-r border-slate-200 flex-col justify-between shrink-0">
@@ -85,8 +106,43 @@ export default function SidebarCliente({ usuarioLogueado }: SidebarClienteProps)
                         );
                     })}
 
-                    {/* Menú Desplegable de Configuración */}
+
                     <div className="space-y-1">
+                        {/* Menú Desplegable de Informes */}
+                        <button
+                            onClick={() => setInfoAbierto(!infoAbierto)}
+                            className={`flex w-full items-center justify-between px-3 py-2 text-sm font-medium text-slate-700 rounded-md hover:bg-slate-50 transition-colors ${rutasInformes.some(ruta => pathname?.startsWith(ruta)) ? 'text-slate-950 font-bold' : ''
+                                }`}
+                        >
+                            <div className="flex items-center">
+                                <Settings className="mr-3 h-4 w-4 text-slate-500" />
+                                <span>Informes</span>
+                            </div>
+                            <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${infoAbierto ? 'transform rotate-180' : ''}`} />
+                        </button>
+
+                        {infoAbierto && (
+                            <div className="pl-4 border-l border-slate-100 ml-5 space-y-1">
+                                {submenuInformes.map((subEnlace) => {
+                                    const SubIcono = subEnlace.icon;
+                                    const isSubActive = pathname === subEnlace.href;
+                                    return (
+                                        <Link
+                                            key={subEnlace.href}
+                                            href={subEnlace.href}
+                                            className={`flex items-center px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${isSubActive ? 'bg-slate-100 text-slate-950 font-bold' : 'text-slate-600 hover:bg-slate-50'
+                                                }`}
+                                        >
+                                            <SubIcono className={`mr-2.5 h-3.5 w-3.5 ${isSubActive ? 'text-slate-950' : 'text-slate-400'}`} />
+                                            {subEnlace.label}
+                                        </Link>
+                                    );
+                                })}
+                            </div>
+                        )}
+
+
+                        {/* Menú Desplegable de Configuración */}
                         <button
                             onClick={() => setConfigAbierto(!configAbierto)}
                             className={`flex w-full items-center justify-between px-3 py-2 text-sm font-medium text-slate-700 rounded-md hover:bg-slate-50 transition-colors ${rutasConfiguracion.some(ruta => pathname?.startsWith(ruta)) ? 'text-slate-950 font-bold' : ''
