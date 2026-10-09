@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState } from 'react';
 import { updateAsignacionGeneral } from '@/actions/asignaciones';
-import { Pencil, AlertTriangle, UserMinus } from 'lucide-react';
+import { Pencil, AlertTriangle, UserMinus, UserCheck } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 interface EditarProps {
@@ -123,9 +123,23 @@ export default function EditarAsignacionModal({ asignacion, catalogos }: EditarP
                                 </div>
 
                                 {licenciaActiva && (
-                                    <div className="mt-2">
-                                        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Motivo/Descripción de la Licencia</label>
-                                        <textarea name="descr_licencia" defaultValue={asignacion.descr_licencia || ''} rows={3} required={licenciaActiva} placeholder="Detalles..." className="w-full border p-1.5 border-amber-200 bg-amber-50/20 rounded-lg text-xs resize-none focus:outline-none" />
+                                    <div className="space-y-2 p-3 bg-amber-50/30 border border-amber-100 rounded-xl animate-fadeIn">
+                                        <div className="mt-2">
+                                            <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Motivo/Descripción de la Licencia</label>
+                                            <textarea name="descr_licencia" defaultValue={asignacion.descr_licencia || ''} rows={3} required={licenciaActiva} placeholder="Detalles..." className="w-full border p-1.5 border-amber-200 bg-amber-50/20 rounded-lg text-xs resize-none focus:outline-none" />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 flex items-center">
+                                                <UserCheck className="w-3 h-3 mr-1 text-slate-400" /> Vincular Docente Suplente Reemplazante
+                                            </label>
+                                            <select name="id_docente_suplente" defaultValue={asignacion.id_docente_suplente || ''} required={licenciaActiva} className="w-full border p-2 rounded-lg text-sm bg-white">
+                                                <option value="">Seleccione el Suplente...</option>
+                                                {catalogos.docentes.map((d: any) => (
+                                                    <option key={d.id_docente} value={d.id_docente}>{d.apellido}, {d.nombre}</option>
+                                                ))}
+                                            </select>
+                                        </div>
                                     </div>
                                 )}
                             </div>

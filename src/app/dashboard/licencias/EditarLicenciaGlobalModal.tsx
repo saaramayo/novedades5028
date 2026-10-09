@@ -10,9 +10,10 @@ interface EditarGlobalProps {
     licencia: any;
     catalogos: { docentes: any[]; tipos: any[]; turnos: any[]; };
     onSuccess: () => void;
+    puedeEditarEstado: boolean;
 }
 
-export default function EditarLicenciaGlobalModal({ licencia, catalogos, onSuccess }: EditarGlobalProps) {
+export default function EditarLicenciaGlobalModal({ licencia, catalogos, onSuccess, puedeEditarEstado }: EditarGlobalProps) {
     const [open, setOpen] = useState(false);
     const [borrando, setBorrando] = useState(false);
 
@@ -126,11 +127,30 @@ export default function EditarLicenciaGlobalModal({ licencia, catalogos, onSucce
 
                             <div>
                                 <label className="block text-[10px] font-bold text-blue-600 uppercase tracking-wider mb-1">Estado</label>
-                                <select name="estado" defaultValue={licencia.estado} className="w-full border border-blue-200 p-2 rounded-lg text-sm bg-white font-bold text-slate-800">
+                                {/*<select name="estado" defaultValue={licencia.estado} className="w-full border border-blue-200 p-2 rounded-lg text-sm bg-white font-bold text-slate-800">
                                     <option value="Pendiente">⏳ Pendiente de Auditoría</option>
                                     <option value="Aprobado">✅ Aprobado / Validado</option>
                                     <option value="Rechazado">❌ Rechazado / Denegado</option>
-                                </select>
+                                </select>*/}
+
+                                {/* Evaluamos dinámicamente si el rol del catálogo o la property tiene permisos jerárquicos */}
+                                {puedeEditarEstado ? (
+                                    <select
+                                        name="estado"
+                                        defaultValue={licencia.estado}
+                                        className="w-full border border-blue-200 p-2 rounded-lg text-sm bg-white font-bold text-slate-800 focus:ring-1 focus:ring-blue-400"
+                                    >
+                                        <option value="Pendiente">⏳ Pendiente de Auditoría</option>
+                                        <option value="Aprobado">✅ Aprobado / Validado</option>
+                                        <option value="Rechazado">❌ Rechazado / Denegado</option>
+                                    </select>
+                                ) : (
+                                    // Si es personal de Secretaría, se le congela el control mostrando un texto plano protegido
+                                    <div className="w-full border bg-slate-50 p-2 rounded-lg text-sm font-bold text-slate-500 select-none">
+                                        {licencia.estado === 'Pendiente' ? '⏳ Pendiente' : licencia.estado === 'Aprobado' ? '✅ Aprobado' : '❌ Rechazado'} (Solo lectura para su rol)
+                                        <input type="hidden" name="estado" value={licencia.estado} /> {/* Mantiene el valor original en el envío de datos */}
+                                    </div>
+                                )}
                             </div>
 
                             <div>

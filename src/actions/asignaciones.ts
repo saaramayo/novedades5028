@@ -27,7 +27,7 @@ export async function getAsignacionesPaginadas(paginaActual: number, search: str
             CONCAT(d.apellido, ', ', d.nombre) AS docente_agente, d.dni, d.cuil,
             m.nombre AS materia_nombre,
             div.nombre AS division_nombre, c.nombre AS curso_nombre,
-            t.nombre AS turno
+            t.nombre AS turno, a.id_docente_suplente
         FROM asignaciones a
         JOIN docentes d ON a.id_docente = d.id_docente
         JOIN materias m ON a.id_materia = m.id_materia
@@ -76,33 +76,54 @@ export async function getCatalogosAsignaciones() {
 
 // 2. Crear Asignación con Validador de Duplicados Incorporado
 export async function createAsignacionGeneral(prevState: any, formData: FormData) {
-    const id_docente = formData.get('id_docente');
-    const id_materia = formData.get('id_materia');
-    const id_division = formData.get('id_division');
-    const anio_lectivo = formData.get('anio_lectivo');
-    const situacion_revista = formData.get('situacion_revista');
+    const id_docente = parseInt(formData.get('id_docente') as string, 10);
+    const id_materia = parseInt(formData.get('id_materia') as string, 10);
+    const id_division = parseInt(formData.get('id_division') as string, 10);
+    const anio_lectivo = parseInt(formData.get('anio_lectivo') as string, 10);
+    const situacion_revista = formData.get('situacion_revista') as string;
     const cant_hs = parseInt(formData.get('cant_hs') as string, 10);
     const fch_toma_posesion = formData.get('fch_toma_posesion') || null;
     const fch_cese = formData.get('fch_cese') || null;
     const dcto_res = formData.get('dcto_res') || null;
+
     const con_licencia = formData.get('con_licencia') === 'true';
     const descr_licencia = con_licencia ? (formData.get('descr_licencia') as string || null) : null;
-    const baja = formData.get('baja') === 'true';
-    const motivo_baja = baja ? (formData.get('motivo_baja') as string || null) : null;
 
+    // Captura del ID del docente suplente automático
+    const id_docente_suplente_raw = formData.get('id_docente_suplente');
+    const id_docente_suplente = con_licencia && id_docente_suplente_raw ? parseInt(id_docente_suplente_raw as string, 10) : null;
+
+    // 1. VALIDACIÓN: El suplente no puede ser la misma persona que el titular
+    if (con_licencia && id_docente === id_docente_suplente) {
+        return { error: '⚠️ Error: El docente suplente no puede ser el mismo agente titular de la cátedra.' };
+    }
 
     try {
-        await query(
-            `INSERT INTO asignaciones (id_docente, id_materia, id_division, anio_lectivo, situacion_revista, cant_hs, fch_toma_posesion, fch_cese, dcto_res, con_licencia, descr_licencia, baja, motivo_baja) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
-            [id_docente, id_materia, id_division, anio_lectivo, situacion_revista, cant_hs, fch_toma_posesion, fch_cese, dcto_res, con_licencia, descr_licencia, baja, motivo_baja]
+        // 2. VALIDACIÓN: Evitar duplicados idénticos en el mismo ciclo
+        const checkRes = await query(
+            'SELECT COUNT(*) FROM asignaciones WHERE id_docente = $1 AND id_materia = $2 AND id_division = $3 AND anio_lectivo = $4 AND baja = FALSE',
+            [id_docente, id_materia, id_division, anio_lectivo]
         );
+        if (parseInt(checkRes.rows.count, 10) > 0) {
+            return { error: 'El docente ya posee esta materia asignada en esta división de forma activa.' };
+        }
+
+        // 3. Inserción con el nuevo campo de suplente incorporado
+        await query(
+            `INSERT INTO asignaciones (
+            id_docente, id_materia, id_division, anio_lectivo, situacion_revista, 
+            cant_hs, fch_toma_posesion, fch_cese, dcto_res, con_licencia, descr_licencia, id_docente_suplente
+                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+            [id_docente, id_materia, id_division, anio_lectivo, situacion_revista, cant_hs, fch_toma_posesion, fch_cese, dcto_res, con_licencia, descr_licencia, id_docente_suplente]
+        );
+
         revalidatePath('/dashboard/asignaciones');
         return { success: true, error: null };
     } catch (error) {
-        return { error: 'Error al insertar la asignación.' };
+        return { error: 'Error al procesar la vinculación en PostgreSQL.' };
     }
 }
+
 
 export async function deleteAsignacionGeneral(id: number) {
     try {
@@ -129,15 +150,20 @@ export async function updateAsignacionGeneral(id_asignacion: number, formData: F
     const baja = formData.get('baja') === 'true';
     const motivo_baja = baja ? (formData.get('motivo_baja') as string || null) : null;
 
+    // Captura del ID del docente suplente automático
+    const id_docente_suplente_raw = formData.get('id_docente_suplente');
+    const id_docente_suplente = con_licencia && id_docente_suplente_raw ? parseInt(id_docente_suplente_raw as string, 10) : null;
+
     try {
         const text = `
             UPDATE asignaciones 
             SET id_docente = $1, id_materia = $2, id_division = $3, anio_lectivo = $4, 
                 situacion_revista = $5, cant_hs = $6, fch_toma_posesion = $7, fch_cese = $8, 
-                dcto_res = $9, con_licencia = $10, descr_licencia = $11, baja = $12, motivo_baja = $13
-            WHERE id_asignacion = $14
+                dcto_res = $9, con_licencia = $10, descr_licencia = $11, baja = $12, motivo_baja = $13,
+                id_docente_suplente = $14
+            WHERE id_asignacion = $15
         `;
-        await query(text, [id_docente, id_materia, id_division, anio_lectivo, situacion_revista, cant_hs, fch_toma_posesion, fch_cese, dcto_res, con_licencia, descr_licencia, baja, motivo_baja, id_asignacion]);
+        await query(text, [id_docente, id_materia, id_division, anio_lectivo, situacion_revista, cant_hs, fch_toma_posesion, fch_cese, dcto_res, con_licencia, descr_licencia, baja, motivo_baja, id_docente_suplente, id_asignacion]);
         revalidatePath('/dashboard/asignaciones');
         return { success: true, error: null };
     } catch (error) {

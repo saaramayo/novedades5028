@@ -1,3 +1,5 @@
+import { cookies } from 'next/headers';
+import { verifyToken } from '@/lib/jwt';
 import { getFormContext, getLicenciasFiltradasYPaginadas } from '@/actions/licencias';
 import Link from 'next/link';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -16,6 +18,15 @@ export default async function LicenciasPage({ searchParams }: PageProps) {
     const resolvedParams = await searchParams;
     const paginaActual = parseInt(resolvedParams.page || '1', 10);
     const searchTerm = resolvedParams.search || '';
+
+    // 1. EXTRAER SESIÓN: Leemos el rol del operador autenticado
+    const token = (await cookies()).get('session_token')?.value;
+    const usuario = token ? await verifyToken(token) : null;
+
+    // Filtro estricto RBAC: Solo Directivo o Administrador (Supervisor) pueden cambiar estados
+    const puedeEditarEstado = usuario?.role === 'Directivo' || usuario?.role === 'Administrador';
+
+
 
     const { docentes, tipos, turnos } = await getFormContext();
     const { registros, totalPaginas } = await getLicenciasFiltradasYPaginadas(paginaActual, searchTerm);
@@ -49,8 +60,22 @@ export default async function LicenciasPage({ searchParams }: PageProps) {
                                         <Badge variant="outline" className="font-mono bg-slate-50 text-[10px]">Art. {r.articulo} {r.letra}</Badge>
                                     </div>
                                     <div className="flex items-center space-x-2">
-                                        <SelectorEstado idSolicitud={r.id_solicitud} estadoActual={r.estado} />
-                                        <EditarLicenciaGlobalModal licencia={r} catalogos={{ docentes, tipos, turnos }} onSuccess={async () => { 'use server'; }} />
+                                        {/*<SelectorEstado idSolicitud={r.id_solicitud} estadoActual={r.estado} />*/}
+                                        {/* CONTROL CONDICIONAL EN MÓVIL */}
+                                        {puedeEditarEstado ? (
+                                            <SelectorEstado
+                                                idSolicitud={r.id_solicitud}
+                                                estadoActual={r.estado}
+                                            />
+                                        ) : (
+                                            <Badge variant="secondary" className="font-bold text-[10px]">⏳ {r.estado}</Badge>
+                                        )}
+                                        <EditarLicenciaGlobalModal
+                                            licencia={r}
+                                            catalogos={{ docentes, tipos, turnos }}
+                                            onSuccess={async () => { 'use server'; }}
+                                            puedeEditarEstado={puedeEditarEstado}
+                                        />
                                     </div>
                                 </div>
                                 <div>
@@ -95,7 +120,16 @@ export default async function LicenciasPage({ searchParams }: PageProps) {
                                         </TableCell>
                                         <TableCell className="text-slate-500 font-medium text-xs whitespace-nowrap">{new Date(r.fecha_inicio).toLocaleDateString('es-AR')} al {new Date(r.fecha_fin).toLocaleDateString('es-AR')}</TableCell>
                                         <TableCell className="text-slate-600 text-xs font-bold text-center whitespace-nowrap">{r.tiempo} {r.descr_tiempo}</TableCell>
-                                        <TableCell className="text-center"><SelectorEstado idSolicitud={r.id_solicitud} estadoActual={r.estado} /></TableCell>
+                                        <TableCell className="text-center">
+                                            {/*<SelectorEstado idSolicitud={r.id_solicitud} estadoActual={r.estado} />*/}
+                                            {puedeEditarEstado ? (
+                                                <SelectorEstado idSolicitud={r.id_solicitud} estadoActual={r.estado} />
+                                            ) : (
+                                                <Badge variant="outline" className="font-bold text-xs bg-slate-50 text-slate-600 px-2.5 py-1 rounded-md border">
+                                                    {r.estado === 'Aprobado' ? '✅' : r.estado === 'Rechazado' ? '❌' : '⏳'} {r.estado}
+                                                </Badge>
+                                            )}
+                                        </TableCell>
                                         <TableCell className="text-center"><EditarLicenciaGlobalModal licencia={r} catalogos={{ docentes, tipos, turnos }} onSuccess={async () => { 'use server'; }} /></TableCell>
                                     </TableRow>
                                 ))
