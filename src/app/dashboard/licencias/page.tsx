@@ -130,7 +130,14 @@ export default async function LicenciasPage({ searchParams }: PageProps) {
                                                 </Badge>
                                             )}
                                         </TableCell>
-                                        <TableCell className="text-center"><EditarLicenciaGlobalModal licencia={r} catalogos={{ docentes, tipos, turnos }} onSuccess={async () => { 'use server'; }} /></TableCell>
+                                        <TableCell className="text-center">
+                                            <EditarLicenciaGlobalModal
+                                                licencia={r}
+                                                catalogos={{ docentes, tipos, turnos }}
+                                                onSuccess={async () => { 'use server'; }}
+                                                puedeEditarEstado={puedeEditarEstado}
+                                            />
+                                        </TableCell>
                                     </TableRow>
                                 ))
                             )}

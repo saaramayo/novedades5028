@@ -26,10 +26,17 @@ export default function EditarAsignacionModal({ asignacion, catalogos }: EditarP
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger>
-                <button className="inline-flex items-center px-2.5 py-1.5 border border-slate-200 text-slate-700 bg-white rounded-md text-xs font-bold hover:bg-slate-50 transition-colors shadow-2xs">
+            <DialogTrigger render={(props) => (
+                <button
+                    {...props}
+                    className="inline-flex items-center px-2.5 py-1.5 border border-slate-200 text-slate-700 bg-white rounded-md text-xs font-bold hover:bg-slate-50 transition-colors shadow-2xs"
+                >
                     <Pencil className="w-3.5 h-3.5 mr-1 text-slate-500" /> Modificar
                 </button>
+            )}>
+                {/*<button className="inline-flex items-center px-2.5 py-1.5 border border-slate-200 text-slate-700 bg-white rounded-md text-xs font-bold hover:bg-slate-50 transition-colors shadow-2xs">
+                    <Pencil className="w-3.5 h-3.5 mr-1 text-slate-500" /> Modificar
+                </button>*/}
             </DialogTrigger>
 
             <DialogContent className="w-[95%] sm:max-w-[600px] bg-white rounded-xl gap-0 p-0 overflow-hidden">

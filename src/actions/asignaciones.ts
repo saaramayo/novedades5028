@@ -104,7 +104,7 @@ export async function createAsignacionGeneral(prevState: any, formData: FormData
             'SELECT COUNT(*) FROM asignaciones WHERE id_docente = $1 AND id_materia = $2 AND id_division = $3 AND anio_lectivo = $4 AND baja = FALSE',
             [id_docente, id_materia, id_division, anio_lectivo]
         );
-        if (parseInt(checkRes.rows.count, 10) > 0) {
+        if (parseInt(checkRes.rows[0].count, 10) > 0) {
             return { error: 'El docente ya posee esta materia asignada en esta división de forma activa.' };
         }
 

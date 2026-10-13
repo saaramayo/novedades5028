@@ -26,7 +26,11 @@ export async function getNovedadesDelDia() {
             JOIN docentes d ON s.id_docente = d.id_docente
             JOIN tipos_licencias tl ON s.id_tipo_licencia = tl.id_tipo_licencia
             WHERE s.estado = 'Aprobado'
-                AND $1::date BETWEEN s.fecha_inicio AND s.fecha_fin
+                AND ($1::date BETWEEN s.fecha_inicio AND s.fecha_fin)
+                AND ((SELECT COUNT(a.id_asignacion) 
+                            FROM asignaciones a 
+                            WHERE a.id_docente = d.id_docente 
+                                AND not a.id_docente_suplente is null) = 0)
             ORDER BY d.apellido ASC
         `;
 
@@ -78,7 +82,11 @@ export async function getNovedadesDeManiana() {
             JOIN docentes d ON s.id_docente = d.id_docente
             JOIN tipos_licencias tl ON s.id_tipo_licencia = tl.id_tipo_licencia
             WHERE s.estado = 'Aprobado'
-                AND CAST(current_date + cast('1 days' AS interval) AS Date) BETWEEN s.fecha_inicio AND s.fecha_fin
+                AND (CAST(current_date + cast('1 days' AS interval) AS Date) BETWEEN s.fecha_inicio AND s.fecha_fin)
+                AND ((SELECT COUNT(a.id_asignacion) 
+                        FROM asignaciones a 
+                        WHERE a.id_docente = d.id_docente 
+                            AND not a.id_docente_suplente is null) = 0)
             ORDER BY d.apellido ASC
         `;
 

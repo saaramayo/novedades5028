@@ -147,7 +147,7 @@ export default function EditarLicenciaGlobalModal({ licencia, catalogos, onSucce
                                 ) : (
                                     // Si es personal de Secretaría, se le congela el control mostrando un texto plano protegido
                                     <div className="w-full border bg-slate-50 p-2 rounded-lg text-sm font-bold text-slate-500 select-none">
-                                        {licencia.estado === 'Pendiente' ? '⏳ Pendiente' : licencia.estado === 'Aprobado' ? '✅ Aprobado' : '❌ Rechazado'} (Solo lectura para su rol)
+                                        {licencia.estado === 'Pendiente' ? '⏳ Pendiente' : licencia.estado === 'Aprobado' ? '✅ Aprobado' : '❌ Rechazado'} 
                                         <input type="hidden" name="estado" value={licencia.estado} /> {/* Mantiene el valor original en el envío de datos */}
                                     </div>
                                 )}
@@ -166,7 +166,7 @@ export default function EditarLicenciaGlobalModal({ licencia, catalogos, onSucce
                         </button>
                         <div className="flex space-x-2">
                             <button type="button" onClick={() => setOpen(false)} className="px-4 py-2 border text-slate-700 text-xs font-semibold rounded-lg bg-white">Cancelar</button>
-                            <button type="submit" disabled={isPending} className="px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700">{isPending ? 'Guardando...' : 'Aplicar Dictamen'}</button>
+                            <button type="submit" disabled={isPending} className="px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700">{isPending ? 'Guardando...' : 'Guardar Datos'}</button>
                         </div>
                     </div>
                 </form>

@@ -19,11 +19,21 @@ export default function AsignacionModal({ catalogos }: { catalogos: any }) {
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
+            <DialogTrigger render={(props) => (
+                <button
+                    {...props}
+                    className="flex items-center px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-semibold hover:bg-slate-800 transition-colors shadow-sm"
+                >
+                    <Plus className="w-4 h-4 mr-2" /> Nueva Asignación
+                </button>
+            )}>
+            </DialogTrigger>
+
+            {/*<DialogTrigger asChild>
                 <button className="flex items-center px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-semibold hover:bg-slate-800 transition-colors shadow-sm">
                     <Plus className="w-4 h-4 mr-2" /> Nueva Asignación
                 </button>
-            </DialogTrigger>
+            </DialogTrigger>*/}
             <DialogContent className="w-[95%] sm:max-w-[600px] bg-white rounded-xl gap-0 p-0 overflow-hidden border">
                 <DialogHeader className="p-6 border-b border-slate-100 bg-white shrink-0">
                     <DialogTitle className="text-lg font-bold text-slate-900 flex items-center">
