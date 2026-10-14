@@ -53,7 +53,7 @@ export default function EditarCargoModal({ idDocente, item, catalogos, onSuccess
 
                         <div className="space-y-3">
                             <div>
-                                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cargo</label>
+                                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cargo *</label>
                                 <select name="id_cargo" defaultValue={item.id_cargo} required className="w-full border p-2 rounded-lg text-sm bg-white focus:outline-none">
                                     {catalogos.cargos.map((c: any) => <option key={c.id_cargo} value={c.id_cargo}>{c.nombre_cargo}</option>)}
                                 </select>
@@ -61,7 +61,7 @@ export default function EditarCargoModal({ idDocente, item, catalogos, onSuccess
 
                             <div className="grid grid-cols-2 gap-1">
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Turno</label>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Turno *</label>
                                     <select name="id_turno" defaultValue={item.id_turno} required className="w-full border p-2 rounded-lg text-sm bg-white">
                                         {catalogos.turnos.map((t: any) => <option key={t.id_turno} value={t.id_turno}>{t.nombre}</option>)}
                                     </select>
@@ -74,7 +74,7 @@ export default function EditarCargoModal({ idDocente, item, catalogos, onSuccess
 
                             <div className="grid grid-cols-2 gap-1">
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Toma Posesión</label>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Toma Posesión *</label>
                                     <input type="date" name="fch_toma_posesion" defaultValue={limpiarFecha(item.fch_toma_posesion)} required className="w-full border p-2 rounded-lg text-xs" />
                                 </div>
                                 <div>
@@ -94,7 +94,7 @@ export default function EditarCargoModal({ idDocente, item, catalogos, onSuccess
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cant. Hs</label>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cant. Hs *</label>
                                     <input type="number" name="cant_hs" defaultValue={item.cant_hs} min={0} required className="w-full border p-2 rounded-lg text-sm font-mono" />
                                 </div>
                             </div>

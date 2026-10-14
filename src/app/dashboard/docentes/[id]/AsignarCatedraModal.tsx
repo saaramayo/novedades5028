@@ -66,7 +66,7 @@ export default function AsignarCatedraModal({ idDocente, catalogos, onSuccess }:
                         <div className="space-y-3">
                             <div className="grid grid-cols-1 sm:grid-cols-4 gap-1">
                                 <div className="col-span-3">
-                                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Materia</label>
+                                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Materia *</label>
                                     <select name="id_materia" required className="w-full border p-2 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-400">
                                         <option value="">Seleccione una materia...</option>
                                         {catalogos.materias.map(m => (
@@ -75,7 +75,7 @@ export default function AsignarCatedraModal({ idDocente, catalogos, onSuccess }:
                                     </select>
                                 </div>
                                 <div className="col-span-1">
-                                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cant. Horas</label>
+                                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cant. Horas *</label>
                                     <input
                                         type="number"
                                         name="cant_hs"
@@ -88,7 +88,7 @@ export default function AsignarCatedraModal({ idDocente, catalogos, onSuccess }:
 
                             <div className="grid grid-cols-1 sm:grid-cols-4 gap-1">
                                 <div className="col-span-2">
-                                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Curso / División</label>
+                                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Curso / División *</label>
                                     <select name="id_division" required className="w-full border p-2 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-400">
                                         <option value="">Seleccione...</option>
                                         {catalogos.divisiones.map(d => (
@@ -109,7 +109,7 @@ export default function AsignarCatedraModal({ idDocente, catalogos, onSuccess }:
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Fecha Toma Posesión</label>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Toma Posesión *</label>
                                     <input type="date" name="fch_toma_posesion" required className="w-full border p-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400" />
                                 </div>
 
@@ -127,7 +127,7 @@ export default function AsignarCatedraModal({ idDocente, catalogos, onSuccess }:
                                     <input type="text" name="dcto_res" placeholder="Decreto/Resolución" className="w-full border p-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400" />
                                 </div>
                                 <div className="col-span-1">
-                                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Ciclo</label>
+                                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Ciclo *</label>
                                     <input
                                         type="number"
                                         name="anio_lectivo"
@@ -158,7 +158,7 @@ export default function AsignarCatedraModal({ idDocente, catalogos, onSuccess }:
 
                                 {licenciaActiva && (
                                     <div className="mt-2 animate-fadeIn">
-                                        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Motivo/Descripción de la Licencia</label>
+                                        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Motivo/Descripción de la Licencia *</label>
                                         <textarea name="descr_licencia" rows={3} required={licenciaActiva} placeholder="Detalles..." className="w-full border p-2 border-amber-200 bg-amber-50/20 rounded-lg text-xs resize-none" />
                                     </div>
                                 )}
@@ -181,7 +181,10 @@ export default function AsignarCatedraModal({ idDocente, catalogos, onSuccess }:
                                     </label>
                                 </div>
                                 {bajaActiva && (
-                                    <textarea name="motivo_baja" rows={3} required={bajaActiva} placeholder="Ej: Renuncia / Traslado" className="w-full border p-1.5 border-red-200 bg-red-50/10 rounded-lg text-xs resize-none" />
+                                    <div className="mt-2 animate-fadeIn">
+                                        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Motivo/Descripción de la Baja *</label>
+                                        <textarea name="motivo_baja" rows={3} required={bajaActiva} placeholder="Ej: Renuncia / Traslado" className="w-full border p-1.5 border-red-200 bg-red-50/10 rounded-lg text-xs resize-none" />
+                                    </div>
                                 )}
                             </div>
 

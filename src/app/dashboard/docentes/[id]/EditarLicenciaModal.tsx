@@ -16,6 +16,7 @@ export default function EditarLicenciaModal({ licencia, tipos, onSuccess }: Edit
     const [open, setOpen] = useState(false);
     const [state, formAction, isPending] = useActionState(
         async (prevState: any, formData: FormData) => {
+            formData.append('id_docente', licencia.id_docente.toString());
             const res = await updateLicenciaGeneral(licencia.id_solicitud, formData);
             if (res.success) {
                 setOpen(false);
@@ -57,7 +58,7 @@ export default function EditarLicenciaModal({ licencia, tipos, onSuccess }: Edit
                             {/* Selección del Artículo */}
                             <div className="grid grid-cols-1 sm:grid-cols-5 gap-1">
                                 <div className="sm:col-span-4">
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Artículo</label>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Artículo *</label>
                                     <select name="id_tipo_licencia" defaultValue={licencia.id_tipo_licencia} required className="w-full border p-2 rounded-lg text-sm bg-white">
                                         {tipos.map((t) => (
                                             <option key={t.id_tipo_licencia} value={t.id_tipo_licencia}>
@@ -79,11 +80,11 @@ export default function EditarLicenciaModal({ licencia, tipos, onSuccess }: Edit
                                     <input type="text" name="asignatura_cargo" defaultValue={licencia.asignatura_cargo || ''} className="w-full border p-2 rounded-lg text-sm" />
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Fecha Inicio</label>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Fecha Inicio *</label>
                                     <input type="date" name="fecha_inicio" defaultValue={limpiarFecha(licencia.fecha_inicio)} required className="w-full border p-2 rounded-lg text-sm" />
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Fecha Fin</label>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Fecha Fin *</label>
                                     <input type="date" name="fecha_fin" defaultValue={limpiarFecha(licencia.fecha_fin)} required className="w-full border p-2 rounded-lg text-sm" />
                                 </div>
                             </div>
@@ -91,19 +92,19 @@ export default function EditarLicenciaModal({ licencia, tipos, onSuccess }: Edit
                             {/* Tiempo y Turno */}
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-1">
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cantidad Tiempo</label>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cantidad Tiempo *</label>
                                     <input type="number" name="tiempo" defaultValue={licencia.tiempo || ''} min={1} required className="w-full border p-2 rounded-lg text-sm" />
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Unidad</label>
-                                    <select name="descr_tiempo" defaultValue={licencia.descr_tiempo || 'Día/s'} className="w-full border p-2 rounded-lg text-sm bg-white">
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Unidad *</label>
+                                    <select name="descr_tiempo" defaultValue={licencia.descr_tiempo || 'Día/s'} required className="w-full border p-2 rounded-lg text-sm bg-white">
                                         <option value="Día/s">Día/s</option>
                                         <option value="Minutos">Minutos</option>
                                         <option value="Oblig.">Oblig.</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Turno</label>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Turno *</label>
                                     <select name="id_turno" defaultValue={licencia.id_turno || ''} required className="w-full border p-2 rounded-lg text-sm bg-white">
                                         <option value="1">Mañana</option>
                                         <option value="2">Tarde</option>
@@ -113,7 +114,7 @@ export default function EditarLicenciaModal({ licencia, tipos, onSuccess }: Edit
 
                             {/* Estado de Auditoría (Habilitado para edición por roles jerárquicos) */}
                             <div>
-                                <label className="block text-[10px] font-bold text-blue-600 uppercase tracking-wider mb-1">Estado</label>
+                                <label className="block text-[10px] font-bold text-blue-600 uppercase tracking-wider mb-1">Estado *</label>
                                 <select name="estado" defaultValue={licencia.estado} className="w-full border border-blue-200 p-2 rounded-lg text-sm bg-white font-bold text-slate-800">
                                     <option value="Pendiente">Pendiente</option>
                                     <option value="Aprobado">Aprobado</option>

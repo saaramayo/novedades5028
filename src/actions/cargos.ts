@@ -89,7 +89,7 @@ export async function updateCargoDocente(id_docente_cargo: number, formData: For
             SET id_cargo = $1, id_turno = $2, situacion_revista = $3, fch_toma_posesion = $4, 
                 fch_cese = $5, dcto_res = $6, cant_hs = $7, 
                 con_licencia = $8, descr_licencia = $9
-            WHERE id_docente_cargo = $12
+            WHERE id_docente_cargo = $10
         `;
 
         await query(sql, [

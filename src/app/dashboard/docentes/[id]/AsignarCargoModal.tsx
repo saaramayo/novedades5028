@@ -51,7 +51,7 @@ export default function AsignarCargoModal({ idDocente, catalogos, onSuccess }: C
 
                         <div className="space-y-3">
                             <div>
-                                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cargo a Designar</label>
+                                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cargo a Designar *</label>
                                 <select name="id_cargo" required className="w-full border p-2 rounded-lg text-sm bg-white focus:outline-none">
                                     <option value="">Seleccione el cargo...</option>
                                     {catalogos.cargos.map((c: any) => <option key={c.id_cargo} value={c.id_cargo}>{c.nombre_cargo}</option>)}
@@ -59,7 +59,7 @@ export default function AsignarCargoModal({ idDocente, catalogos, onSuccess }: C
                             </div>
                             <div className="grid grid-cols-2 gap-1">
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Turno</label>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Turno *</label>
                                     <select name="id_turno" required className="w-full border p-2 rounded-lg text-sm bg-white">
                                         <option value="">Seleccione...</option>
                                         {catalogos.turnos.map((t: any) => <option key={t.id_turno} value={t.id_turno}>{t.nombre}</option>)}
@@ -74,7 +74,7 @@ export default function AsignarCargoModal({ idDocente, catalogos, onSuccess }: C
 
                             <div className="grid grid-cols-2 gap-1">
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Toma Posesión</label>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Toma Posesión *</label>
                                     <input type="date" name="fch_toma_posesion" required className="w-full border p-2 rounded-lg text-xs" />
                                 </div>
                                 <div>
@@ -85,7 +85,7 @@ export default function AsignarCargoModal({ idDocente, catalogos, onSuccess }: C
 
                             <div className="grid grid-cols-4 gap-1">
                                 <div className="col-span-3">
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Régimen Revista</label>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Situación de Revista</label>
                                     <select name="situacion_revista" className="w-full border p-2 rounded-lg text-sm bg-white">
                                         <option value="">Seleccione...</option>
                                         <option value="Titular">Titular</option>
@@ -94,7 +94,7 @@ export default function AsignarCargoModal({ idDocente, catalogos, onSuccess }: C
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cant. Hs</label>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cant. Hs *</label>
                                     <input type="number" name="cant_hs" min={0} defaultValue={0} required className="w-full border p-2 rounded-lg text-sm font-mono" />
                                 </div>
                             </div>

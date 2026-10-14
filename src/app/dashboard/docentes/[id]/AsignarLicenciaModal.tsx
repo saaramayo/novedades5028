@@ -56,7 +56,7 @@ export default function AsignarLicenciaModal({ idDocente, tipos, onSuccess }: Al
                             {/* Artículo Encuadre */}
                             <div className="grid grid-cols-1 sm:grid-cols-5 gap-1">
                                 <div className="sm:col-span-4">
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Artículo</label>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Artículo *</label>
                                     <select name="id_tipo_licencia" required className="w-full border p-2 rounded-lg text-sm bg-white focus:ring-2 focus:ring-slate-400 focus:outline-none">
                                         <option value="">Seleccione un Artículo...</option>
                                         {tipos.map((t) => (
@@ -79,11 +79,11 @@ export default function AsignarLicenciaModal({ idDocente, tipos, onSuccess }: Al
                                     <input type="text" name="asignatura_cargo" placeholder="Ej: Matemática I / Preceptor" className="w-full border p-2 rounded-lg text-sm" />
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Fecha Inicio</label>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Fecha Inicio *</label>
                                     <input type="date" name="fecha_inicio" required className="w-full border p-2 rounded-lg text-sm" />
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Fecha Fin</label>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Fecha Fin *</label>
                                     <input type="date" name="fecha_fin" required className="w-full border p-2 rounded-lg text-sm" />
                                 </div>
                             </div>
@@ -91,19 +91,19 @@ export default function AsignarLicenciaModal({ idDocente, tipos, onSuccess }: Al
                             {/* Fila Adaptativa: Tiempo, Unidad y Turno */}
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-1">
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cantidad Tiempo</label>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Cantidad Tiempo *</label>
                                     <input type="number" name="tiempo" min={1} required className="w-full border p-2 rounded-lg text-sm" />
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Unidad</label>
-                                    <select name="descr_tiempo" className="w-full border p-2 rounded-lg text-sm bg-white">
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Unidad *</label>
+                                    <select name="descr_tiempo" required className="w-full border p-2 rounded-lg text-sm bg-white">
                                         <option value="Día/s">Día/s</option>
                                         <option value="Minutos">Minutos</option>
                                         <option value="Oblig.">Oblig.</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Turno</label>
+                                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Turno *</label>
                                     <select name="id_turno" required className="w-full border p-2 rounded-lg text-sm bg-white">
                                         <option value="">Seleccione...</option>
                                         <option value="1">Mañana</option>

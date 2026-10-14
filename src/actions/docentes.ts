@@ -309,7 +309,7 @@ export async function getCargaHorariaPorDocente(id_docente: number) {
         FROM docentes d JOIN docentes_cargos dc ON d.id_docente = dc.id_docente
         JOIN cargos c ON dc.id_cargo = c.id_cargo
         JOIN turnos t ON dc.id_turno = t.id_turno
-        WHERE d.id_docente = $1 
+        WHERE d.id_docente = $1 AND dc.baja = FALSE 
         GROUP BY d.id_docente, t.id_turno, c.nombre_cargo, t.nombre, c.por_hs, dc.cant_hs, dc.con_licencia
         ORDER BY t.id_turno
     `;
